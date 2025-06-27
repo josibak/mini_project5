@@ -1,0 +1,109 @@
+name: github-action
+run-name: ${{ github.actor }} is out building GitHub Actions
+
+on:
+  push:
+    # Pattern matched against refs/tags
+    tags:        
+      - '**' 
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Build Maven Projects
+        run: |
+          mvn clean package -f ./authormanagement/pom.xml
+          mvn clean package -f ./manuscript/pom.xml
+          mvn clean package -f ./aipublication/pom.xml
+          mvn clean package -f ./book/pom.xml
+          mvn clean package -f ./usermanagement/pom.xml
+          mvn clean package -f ./subcription/pom.xml
+          mvn clean package -f ./point/pom.xml
+
+      - name: Docker Build and push for Authormanagement
+        uses: docker/build-push-action@v4
+        with:
+          context: ./authormanagement
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/authormanagement:latest
+            ghcr.io/${{ github.repository }}/authormanagement:${{ github.ref_name }}
+            
+      - name: Docker Build and push for Manuscript
+        uses: docker/build-push-action@v4
+        with:
+          context: ./manuscript
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/manuscript:latest
+            ghcr.io/${{ github.repository }}/manuscript:${{ github.ref_name }}
+            
+      - name: Docker Build and push for Aipublication
+        uses: docker/build-push-action@v4
+        with:
+          context: ./aipublication
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/aipublication:latest
+            ghcr.io/${{ github.repository }}/aipublication:${{ github.ref_name }}
+            
+      - name: Docker Build and push for Book
+        uses: docker/build-push-action@v4
+        with:
+          context: ./book
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/book:latest
+            ghcr.io/${{ github.repository }}/book:${{ github.ref_name }}
+            
+      - name: Docker Build and push for Usermanagement
+        uses: docker/build-push-action@v4
+        with:
+          context: ./usermanagement
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/usermanagement:latest
+            ghcr.io/${{ github.repository }}/usermanagement:${{ github.ref_name }}
+            
+      - name: Docker Build and push for Subcription
+        uses: docker/build-push-action@v4
+        with:
+          context: ./subcription
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/subcription:latest
+            ghcr.io/${{ github.repository }}/subcription:${{ github.ref_name }}
+            
+      - name: Docker Build and push for Point
+        uses: docker/build-push-action@v4
+        with:
+          context: ./point
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}/point:latest
+            ghcr.io/${{ github.repository }}/point:${{ github.ref_name }}
+            

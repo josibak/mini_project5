@@ -1,0 +1,108 @@
+server:
+  port: 8088
+
+---
+
+spring:
+  profiles: default
+  cloud:
+    gateway:
+#<<< API Gateway / Routes
+      routes:
+        - id: authormanagement
+          uri: http://localhost:8082
+          predicates:
+            - Path=/authors/**, 
+        - id: manuscript
+          uri: http://localhost:8083
+          predicates:
+            - Path=/manuscripts/**, 
+        - id: aipublication
+          uri: http://localhost:8084
+          predicates:
+            - Path=/publications/**, 
+        - id: book
+          uri: http://localhost:8085
+          predicates:
+            - Path=/books/**, 
+        - id: usermanagement
+          uri: http://localhost:8086
+          predicates:
+            - Path=/members/**, /userpages/**
+        - id: subcription
+          uri: http://localhost:8087
+          predicates:
+            - Path=/subcriptions/**, 
+        - id: point
+          uri: http://localhost:8088
+          predicates:
+            - Path=/pointAccounts/**, 
+        - id: frontend
+          uri: http://localhost:8080
+          predicates:
+            - Path=/**
+#>>> API Gateway / Routes
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+
+---
+
+spring:
+  profiles: docker
+  cloud:
+    gateway:
+      routes:
+        - id: authormanagement
+          uri: http://authormanagement:8080
+          predicates:
+            - Path=/authors/**, 
+        - id: manuscript
+          uri: http://manuscript:8080
+          predicates:
+            - Path=/manuscripts/**, 
+        - id: aipublication
+          uri: http://aipublication:8080
+          predicates:
+            - Path=/publications/**, 
+        - id: book
+          uri: http://book:8080
+          predicates:
+            - Path=/books/**, 
+        - id: usermanagement
+          uri: http://usermanagement:8080
+          predicates:
+            - Path=/members/**, 
+        - id: subcription
+          uri: http://subcription:8080
+          predicates:
+            - Path=/subcriptions/**, 
+        - id: point
+          uri: http://point:8080
+          predicates:
+            - Path=/pointAccounts/**, 
+        - id: frontend
+          uri: http://frontend:8080
+          predicates:
+            - Path=/**
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+server:
+  port: 8080
