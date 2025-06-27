@@ -30,14 +30,10 @@ spring:
       bindings:
         event-in:
           group: authormanagement
-#<<< EDA / Topic Name
           destination: miniproject
-#>>> EDA / Topic Name
           contentType: application/json
         event-out:
-#<<< EDA / Topic Name
           destination: miniproject
-#>>> EDA / Topic Name
           contentType: application/json
 
 logging:
