@@ -1,6 +1,5 @@
 package miniproject.domain;
 
-import java.time.LocalDate;
 import java.util.*;
 import lombok.*;
 import miniproject.domain.*;
@@ -16,8 +15,12 @@ public class KtPointGranted extends AbstractEvent {
     private Integer balance;
     private Integer amount;
 
-    public KtPointGranted(PointAccount aggregate) {
-        super(aggregate);
+    public KtPointGranted(PointAccount pointAccount) {
+        super(pointAccount);
+        this.pointAccountId = pointAccount.getPointAccountId();
+        this.userId = pointAccount.getUserId();
+        this.balance = pointAccount.getBalance();
+        this.amount = 3000; // KT 인증 시 지급 포인트
     }
 
     public KtPointGranted() {

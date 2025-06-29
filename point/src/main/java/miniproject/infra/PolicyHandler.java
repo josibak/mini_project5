@@ -25,18 +25,17 @@ public class PolicyHandler {
 
     @StreamListener(
         value = KafkaProcessor.INPUT,
-        condition = "headers['type']=='PointBookOpened'"
+        condition = "headers['type']=='BookOpened'"
     )
-    public void wheneverPointBookOpened_BookOpenedByPoint(
-        @Payload PointBookOpened pointBookOpened
+    public void wheneverBookOpened_BookOpenedByPoint(
+        @Payload BookOpened bookOpened
     ) {
-        PointBookOpened event = pointBookOpened;
         System.out.println(
-            "\n\n##### listener BookOpenedByPoint : " + pointBookOpened + "\n\n"
+            "\n\n##### listener BookOpenedByPoint : " + bookOpened  + "\n\n"
         );
 
-        // Sample Logic //
-        PointAccount.bookOpenedByPoint(event);
+        // 포인트 차감 로직 호출
+        PointAccount.bookOpenedByPoint(bookOpened);
     }
 
     @StreamListener(

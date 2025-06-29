@@ -14,10 +14,12 @@ public class PointDeducted extends AbstractEvent {
     private Long pointAccountId;
     private Long userId;
     private Integer balance;
-    private Integer balance;
 
-    public PointDeducted(PointAccount aggregate) {
-        super(aggregate);
+    public PointDeducted(PointAccount pointAccount) {
+        super(pointAccount);
+        this.pointAccountId = pointAccount.getPointAccountId();
+        this.userId = pointAccount.getUserId();
+        this.balance = pointAccount.getBalance();
     }
 
     public PointDeducted() {

@@ -34,6 +34,22 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+      
+  point:
+    build:
+      context: ../point
+    container_name: point
+    ports:
+      - "8088:8088"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - kafka
+    working_dir: /usr/src
+    volumes:
+      - ../point:/usr/src
+      - ../maven-repo:/root/.m2
+    command: mvn spring-boot:run
 
 volumes:
   kafka-data:

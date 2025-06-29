@@ -1,11 +1,7 @@
 package miniproject.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.Optional; 
 import javax.persistence.*;
 import lombok.Data;
 import miniproject.PointApplication;
@@ -16,112 +12,90 @@ import miniproject.domain.PointDeducted;
 @Entity
 @Table(name = "PointAccount_table")
 @Data
-//<<< DDD / Aggregate Root
 public class PointAccount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long pointAccountId;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(nullable = false, unique = true)
     private Long userId;
 
     private Integer balance;
 
     public static PointAccountRepository repository() {
-        PointAccountRepository pointAccountRepository = PointApplication.applicationContext.getBean(
-            PointAccountRepository.class
-        );
-        return pointAccountRepository;
+        return PointApplication.applicationContext.getBean(PointAccountRepository.class);
     }
 
-    //<<< Clean Arch / Port Method
-    public static void bookOpenedByPoint(PointBookOpened pointBookOpened) {
-        //implement business logic here:
+    public static void bookOpenedByPoint(BookOpened bookOpened) {
+        if (Boolean.TRUE.equals(bookOpened.getSubscribeStatus())) {
+            System.out.println("구독자는 포인트 차감 안 함");
+            return;
+        }
 
-        /** Example 1:  new item 
-        PointAccount pointAccount = new PointAccount();
-        repository().save(pointAccount);
+        repository().findByUserId(bookOpened.getUserId()).ifPresentOrElse(pointAccount -> {
+            if (pointAccount.getBalance() >= 10) {
+                pointAccount.setBalance(pointAccount.getBalance() - 10);
+                repository().save(pointAccount);
 
-        PointDeducted pointDeducted = new PointDeducted(pointAccount);
-        pointDeducted.publishAfterCommit();
-        */
+                PointDeducted deductedEvent = new PointDeducted(pointAccount);
+                deductedEvent.publishAfterCommit();
 
-        /** Example 2:  finding and process
-        
-
-        repository().findById(pointBookOpened.get???()).ifPresent(pointAccount->{
-            
-            pointAccount // do something
-            repository().save(pointAccount);
-
-            PointDeducted pointDeducted = new PointDeducted(pointAccount);
-            pointDeducted.publishAfterCommit();
-
-         });
-        */
-
+                System.out.println("포인트 차감 성공 -10");
+            } else {
+                System.out.println("포인트 부족");
+            }
+        }, () -> {
+            System.out.println("해당 유저의 포인트 계정 없음");
+        });
     }
 
-    //>>> Clean Arch / Port Method
-    //<<< Clean Arch / Port Method
     public static void userRegistered(MemberRegistered memberRegistered) {
-        //implement business logic here:
+        if (memberRegistered.getUserId() == null) {
+            System.out.println("userId 없음 - userRegistered 무시");
+            return;
+        }
 
-        /** Example 1:  new item 
-        PointAccount pointAccount = new PointAccount();
-        repository().save(pointAccount);
+        Optional<PointAccount> optional = repository().findByUserId(memberRegistered.getUserId());
 
-        BasicPointGranted basicPointGranted = new BasicPointGranted(pointAccount);
-        basicPointGranted.publishAfterCommit();
-        */
+        if (optional.isPresent()) {
+            System.out.println("이미 포인트 계좌가 존재함");
+            return;
+        }
 
-        /** Example 2:  finding and process
-        
+        PointAccount account = new PointAccount();
+        account.setUserId(memberRegistered.getUserId());
+        account.setBalance(1000);  // 기본 포인트 지급
+        repository().save(account);
 
-        repository().findById(memberRegistered.get???()).ifPresent(pointAccount->{
-            
-            pointAccount // do something
-            repository().save(pointAccount);
+        BasicPointGranted granted = new BasicPointGranted(account);
+        granted.publishAfterCommit();
 
-            BasicPointGranted basicPointGranted = new BasicPointGranted(pointAccount);
-            basicPointGranted.publishAfterCommit();
-
-         });
-        */
-
+        System.out.println("회원가입 시 포인트 계좌 생성 완료 + 기본 포인트 1000 지급");
     }
 
-    //>>> Clean Arch / Port Method
-    //<<< Clean Arch / Port Method
     public static void ktMemberVerified(KtAuthenticated ktAuthenticated) {
-        //implement business logic here:
+        if (ktAuthenticated.getUserId() == null) {
+            System.out.println("userId 없음 - ktMemberVerified 무시");
+            return;
+        }
 
-        /** Example 1:  new item 
-        PointAccount pointAccount = new PointAccount();
-        repository().save(pointAccount);
+        PointAccount account = repository().findByUserId(ktAuthenticated.getUserId())
+            .orElseGet(() -> {
+                PointAccount newAcc = new PointAccount();
+                newAcc.setUserId(ktAuthenticated.getUserId());
+                newAcc.setBalance(0);
+                return newAcc;
+            });
 
-        KtPointGranted ktPointGranted = new KtPointGranted(pointAccount);
-        ktPointGranted.publishAfterCommit();
-        */
+        account.setBalance(account.getBalance() + 3000);  // KT 인증 보너스
+        repository().save(account);
 
-        /** Example 2:  finding and process
-        
+        KtPointGranted granted = new KtPointGranted(account);
+        granted.publishAfterCommit(); 
 
-        repository().findById(ktAuthenticated.get???()).ifPresent(pointAccount->{
-            
-            pointAccount // do something
-            repository().save(pointAccount);
-
-            KtPointGranted ktPointGranted = new KtPointGranted(pointAccount);
-            ktPointGranted.publishAfterCommit();
-
-         });
-        */
-
+        System.out.println("KT 인증 완료: 포인트 +3000");
     }
-    //>>> Clean Arch / Port Method
-
 }
+
 //>>> DDD / Aggregate Root
