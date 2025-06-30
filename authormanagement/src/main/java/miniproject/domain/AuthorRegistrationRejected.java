@@ -12,7 +12,7 @@ import miniproject.infra.AbstractEvent;
 public class AuthorRegistrationRejected extends AbstractEvent {
 
     private Long authorId;
-    private Integer registrationStatus;
+    private Author.RegistrationStatus registrationStatus;
 
     public AuthorRegistrationRejected(Author aggregate) {
         super(aggregate);
@@ -22,4 +22,4 @@ public class AuthorRegistrationRejected extends AbstractEvent {
         super();
     }
 }
-//>>> DDD / Domain Event
+

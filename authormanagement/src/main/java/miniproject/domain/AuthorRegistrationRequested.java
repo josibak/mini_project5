@@ -6,7 +6,6 @@ import lombok.*;
 import miniproject.domain.*;
 import miniproject.infra.AbstractEvent;
 
-//<<< DDD / Domain Event
 @Data
 @ToString
 public class AuthorRegistrationRequested extends AbstractEvent {
@@ -15,6 +14,7 @@ public class AuthorRegistrationRequested extends AbstractEvent {
     private String name;
     private String bio;
     private String portfolio;
+    private Author.RegistrationStatus registrationStatus;
 
     public AuthorRegistrationRequested(Author aggregate) {
         super(aggregate);
@@ -24,4 +24,4 @@ public class AuthorRegistrationRequested extends AbstractEvent {
         super();
     }
 }
-//>>> DDD / Domain Event
+

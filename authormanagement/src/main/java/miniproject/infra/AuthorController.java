@@ -7,10 +7,7 @@ import javax.transaction.Transactional;
 import miniproject.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-//<<< Clean Arch / Inbound Adaptor
 
 @RestController
 // @RequestMapping(value="/authors")
@@ -21,7 +18,7 @@ public class AuthorController {
     AuthorRepository authorRepository;
 
     @RequestMapping(
-        value = "/authors/requestauthorregistration",
+        value = "/authors",
         method = RequestMethod.POST,
         produces = "application/json;charset=UTF-8"
     )
@@ -34,7 +31,11 @@ public class AuthorController {
             "##### /author/requestAuthorRegistration  called #####"
         );
         Author author = new Author();
-        author.requestAuthorRegistration(requestAuthorRegistrationCommand);
+        author.setName(requestAuthorRegistrationCommand.getName());
+        author.setBio(requestAuthorRegistrationCommand.getBio());
+        author.setPortfolio(requestAuthorRegistrationCommand.getPortfolio());
+        author.setRegistrationStatus(Author.RegistrationStatus.PENDING);
+        //author.requestAuthorRegistration(requestAuthorRegistrationCommand);
         authorRepository.save(author);
         return author;
     }
@@ -46,7 +47,6 @@ public class AuthorController {
     )
     public Author approveAuthorRegistration(
         @PathVariable(value = "id") Long id,
-        @RequestBody ApproveAuthorRegistrationCommand approveAuthorRegistrationCommand,
         HttpServletRequest request,
         HttpServletResponse response
     ) throws Exception {
@@ -57,7 +57,8 @@ public class AuthorController {
 
         optionalAuthor.orElseThrow(() -> new Exception("No Entity Found"));
         Author author = optionalAuthor.get();
-        author.approveAuthorRegistration(approveAuthorRegistrationCommand);
+        author.setRegistrationStatus(Author.RegistrationStatus.APPROVED);
+        //author.approveAuthorRegistration(approveAuthorRegistrationCommand);
 
         authorRepository.save(author);
         return author;
@@ -70,7 +71,6 @@ public class AuthorController {
     )
     public Author rejectAuthorRegistration(
         @PathVariable(value = "id") Long id,
-        @RequestBody RejectAuthorRegistrationCommand rejectAuthorRegistrationCommand,
         HttpServletRequest request,
         HttpServletResponse response
     ) throws Exception {
@@ -81,10 +81,10 @@ public class AuthorController {
 
         optionalAuthor.orElseThrow(() -> new Exception("No Entity Found"));
         Author author = optionalAuthor.get();
-        author.rejectAuthorRegistration(rejectAuthorRegistrationCommand);
+        author.setRegistrationStatus(Author.RegistrationStatus.REJECTED);
+        //author.rejectAuthorRegistration(rejectAuthorRegistrationCommand);
 
         authorRepository.save(author);
         return author;
     }
 }
-//>>> Clean Arch / Inbound Adaptor

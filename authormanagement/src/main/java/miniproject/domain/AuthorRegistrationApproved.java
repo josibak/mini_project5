@@ -6,13 +6,12 @@ import lombok.*;
 import miniproject.domain.*;
 import miniproject.infra.AbstractEvent;
 
-//<<< DDD / Domain Event
 @Data
 @ToString
 public class AuthorRegistrationApproved extends AbstractEvent {
 
     private Long authorId;
-    private Integer registrationStatus;
+    private Author.RegistrationStatus registrationStatus;
 
     public AuthorRegistrationApproved(Author aggregate) {
         super(aggregate);
@@ -22,4 +21,4 @@ public class AuthorRegistrationApproved extends AbstractEvent {
         super();
     }
 }
-//>>> DDD / Domain Event
+

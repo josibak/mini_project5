@@ -8,6 +8,12 @@ spring:
 
 spring:
   profiles: default
+
+  # jackson:
+  #   default-property-inclusion: NON_NULL
+  #   serialization:
+  #     WRITE_ENUMS_USING_TO_STRING: true
+
   jpa:
     properties:
       hibernate:
