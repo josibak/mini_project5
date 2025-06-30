@@ -13,7 +13,7 @@ public class BookOpened extends AbstractEvent {
 
     private Long userId;
     private Long bookId;
-    private Boolean subscribeStatus;
+    private String subscribeStatus;
 
     public BookOpened(Member aggregate) {
         super(aggregate);

@@ -12,7 +12,7 @@ import miniproject.infra.AbstractEvent;
 public class SubscribeFinished extends AbstractEvent {
 
     private Long userId;
-    private Boolean subscribeStatus;
+    private String subscribeStatus;
 
     public SubscribeFinished(Member aggregate) {
         super(aggregate);

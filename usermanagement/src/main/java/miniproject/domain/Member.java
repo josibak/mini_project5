@@ -17,6 +17,8 @@ import java.util.Collections;
 @Table(name="Member_table")
 public class Member  {
 
+    public static final String Repository = null;
+
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     
@@ -58,12 +60,12 @@ public class Member  {
     }
 //>>> Clean Arch / Port Method
 //<<< Clean Arch / Port Method
-    public void subscribtionRequest(SubscribtionRequestCommand command){
+    public void subscriptionRequest(SubscriptionRequestCommand command){
         
         //implement business logic here:
-        this.subscribeStatus = command.getSubscribe();
+        this.subscribeStatus = command.getSubscribeStatus();
 
-        SubscribtionRequested event = new SubscribtionRequested(this);
+        SubscriptionRequested event = new SubscriptionRequested(this);
         event.publishAfterCommit();
         // SubscribtionRequested subscribtionRequested = new SubscribtionRequested(this);
         // subscribtionRequested.publishAfterCommit();
@@ -74,8 +76,7 @@ public class Member  {
         //implement business logic here:
         
 
-        miniproject.external.MemberQuery memberQuery = new miniproject.external.MemberQuery();
-        // memberQuery.set??()        
+        miniproject.external.MemberQuery memberQuery = new miniproject.external.MemberQuery();      
         memberQuery.setEmail(registerMemberCommand.getEmail());
 
         miniproject.external.MemberInfo result =
@@ -85,7 +86,7 @@ public class Member  {
         
         this.name = result.getName();
         this.email = result.getEmail();
-        this.subscribeStatus = false;
+        this.subscribeStatus = "NOSUBSCRIBE";
         this.isKtUser = result.getIsktUser();
 
         MemberRegistered memberRegistered = new MemberRegistered(this);

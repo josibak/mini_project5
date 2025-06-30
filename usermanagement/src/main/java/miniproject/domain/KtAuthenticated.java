@@ -21,7 +21,7 @@ public class KtAuthenticated extends AbstractEvent {
         this.userId = aggregate.getUserId();
         this.name = aggregate.getName();
         this.email = aggregate.getEmail();
-        this.isKtUser = aggregate.getIsktUser();
+        this.isKtUser = aggregate.getIsKtUser();
     }
 
     public KtAuthenticated() {

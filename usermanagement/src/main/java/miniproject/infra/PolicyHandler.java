@@ -29,7 +29,7 @@ public class PolicyHandler {
 
         memberRepository.findById(event.getUserId()).ifPresent(member -> {
             member.setSubscribeStatus(event.getSubscribeStatus());
-            member.Repository.save(member);
+            member.repository(member);
         });
     }
 
@@ -40,9 +40,9 @@ public class PolicyHandler {
         System.out.println("[SubscribeFinished] event received: " + event.toJson());
 
         memberRepository.findById(event.getUserId()).ifPresent(member -> {
-            member.setSubscribeStatus(false);
+            member.setSubscribeStatus("NOSUBSCRIBE");
             memberRepository.save(member);
-        })
+        });
     }
 }
 //>>> Clean Arch / Inbound Adaptor

@@ -12,12 +12,12 @@ import miniproject.infra.AbstractEvent;
 public class SubscriptionRequested extends AbstractEvent {
 
     private Long userId;
-    private Boolean subscribe;
+    private String subscribeStatus;
 
     public SubscriptionRequested(Member aggregate) {
         super(aggregate);
         this.userId = aggregate.getUserId();    //
-        this.subscribe = aggregate.getSubscribeStatus();    //
+        this.subscribeStatus = aggregate.getSubscribeStatus();    //
     }
 
     public SubscriptionRequested() {

@@ -14,7 +14,7 @@ public class SubscriberRegistered extends AbstractEvent {
     private Long userId;
     private Long bookId;
     private String name;
-    private Boolean subscribeStatus;
+    private String subscribeStatus;
 
     public SubscriberRegistered(Member aggregate) {
         super(aggregate);
