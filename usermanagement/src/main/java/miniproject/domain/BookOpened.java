@@ -17,6 +17,9 @@ public class BookOpened extends AbstractEvent {
 
     public BookOpened(Member aggregate) {
         super(aggregate);
+        this.userId = aggregate.getUserId();
+        this.bookId = aggregate.getBookId();
+        this.subscribeStatus = aggregate.getSubscribeStatus();
     }
 
     public BookOpened() {

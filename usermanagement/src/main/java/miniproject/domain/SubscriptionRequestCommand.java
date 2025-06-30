@@ -8,5 +8,6 @@ import lombok.Data;
 public class SubscriptionRequestCommand {
 
     private Long userId;
-    private String subscribeStatus;
+    // private Boolean subscribeStatus;
+    private Boolean subscribe;
 }

@@ -16,6 +16,8 @@ public class SubscriptionRequested extends AbstractEvent {
 
     public SubscriptionRequested(Member aggregate) {
         super(aggregate);
+        this.userId = aggregate.getUserId();    //
+        this.subscribe = aggregate.getSubscribeStatus();    //
     }
 
     public SubscriptionRequested() {

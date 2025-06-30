@@ -56,28 +56,47 @@ public class Member  {
         PointBookOpened pointBookOpened = new PointBookOpened(this);
         pointBookOpened.publishAfterCommit();
     }
-
-    public void subscriptionRequest(SubscriptionRequestCommand subscriptionRequestCommand){
+//>>> Clean Arch / Port Method
+//<<< Clean Arch / Port Method
+    public void subscribtionRequest(SubscribtionRequestCommand command){
         
-        this.subscribeStatus = subscriptionRequestCommand.getSubscribeStatus();
+        //implement business logic here:
+        this.subscribeStatus = command.getSubscribe();
 
-        SubscriptionRequested subscriptionRequested = new SubscriptionRequested(this);
-        subscriptionRequested.publishAfterCommit();
+        SubscribtionRequested event = new SubscribtionRequested(this);
+        event.publishAfterCommit();
+        // SubscribtionRequested subscribtionRequested = new SubscribtionRequested(this);
+        // subscribtionRequested.publishAfterCommit();
     }
 
     public void registerMember(RegisterMemberCommand registerMemberCommand){
         
-        this.name = registerMemberCommand.getName();
-        this.email = registerMemberCommand.getEmail();
+        //implement business logic here:
+        
+
+        miniproject.external.MemberQuery memberQuery = new miniproject.external.MemberQuery();
+        // memberQuery.set??()        
+        memberQuery.setEmail(registerMemberCommand.getEmail());
+
+        miniproject.external.MemberInfo result =
+            MemberApplication.applicationContext
+                .getBean(miniproject.external.Service.class)
+                .member(memberQuery);
+        
+        this.name = result.getName();
+        this.email = result.getEmail();
+        this.subscribeStatus = false;
+        this.isKtUser = result.getIsktUser();
 
         MemberRegistered memberRegistered = new MemberRegistered(this);
         memberRegistered.publishAfterCommit();
     }
 
     public void authKt(AuthKtCommand authKtCommand){
-
-        this.name = authKtCommand.getName();
-        this.email = authKtCommand.getEmail();
+        
+        //implement business logic here:
+        this.name = authKtCommand.getName();         // 선택 사항
+        this.email = authKtCommand.getEmail();       // 선택 사항
         this.isKtUser = authKtCommand.getIsKtUser();
 
         KtAuthenticated ktAuthenticated = new KtAuthenticated(this);
@@ -85,7 +104,8 @@ public class Member  {
     }
 
     public void bookOpen(BookOpenCommand bookOpenCommand){
-
+        
+        //implement business logic here:
         this.bookId = bookOpenCommand.getBookId();
         this.subscribeStatus = bookOpenCommand.getSubscribeStatus();
 

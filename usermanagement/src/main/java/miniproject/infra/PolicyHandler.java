@@ -21,6 +21,28 @@ public class PolicyHandler {
     MemberRepository memberRepository;
 
     @StreamListener(KafkaProcessor.INPUT)
-    public void whatever(@Payload String eventString) {}
+    // public void whatever(@Payload String eventString) {}
+    public void wheneverSubscriberRegistered_AddToSubscribers(@payload SubscriberRegistered event){
+        if (!event.validate()) return;
+        
+        System.out.println("[SubscriberRegistered] event received:" + event.toJson());
+
+        memberRepository.findById(event.getUserId()).ifPresent(member -> {
+            member.setSubscribeStatus(event.getSubscribeStatus());
+            member.Repository.save(member);
+        });
+    }
+
+    @StreamListener(KafkaProcessor.INPUT)
+    public void wheneverSubscriberFinished_HandleExpiration(@payload SubscribeFinished event){
+        if (!event.validate()) return;
+
+        System.out.println("[SubscribeFinished] event received: " + event.toJson());
+
+        memberRepository.findById(event.getUserId()).ifPresent(member -> {
+            member.setSubscribeStatus(false);
+            memberRepository.save(member);
+        })
+    }
 }
 //>>> Clean Arch / Inbound Adaptor

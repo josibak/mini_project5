@@ -21,18 +21,24 @@ public class MemberController {
     MemberRepository memberRepository;
 
     @RequestMapping(
-        value = "/members/openbookpoint",
-        method = RequestMethod.POST,
+        value = "/members/{id}/openbookpoint",
+        method = RequestMethod.PUT,
         produces = "application/json;charset=UTF-8"
     )
     public Member openBookPoint(
+        @PathVariable(value="id") Long id,
+        @RequestBody OpenBookPointCommand command,
         HttpServletRequest request,
         HttpServletResponse response,
-        @RequestBody OpenBookPointCommand openBookPointCommand
+        // @RequestBody OpenBookPointCommand openBookPointCommand
     ) throws Exception {
         System.out.println("##### /member/openBookPoint  called #####");
-        Member member = new Member();
-        member.openBookPoint(openBookPointCommand);
+
+        Optional<Member> optionalMember = memberRepository.findById(id);
+        if (!optionalMember.isPresent()) throw new Exception("Member not found");
+
+        Member member = OptionalMember.get();
+        member.openBookPoint(command);
         memberRepository.save(member);
         return member;
     }

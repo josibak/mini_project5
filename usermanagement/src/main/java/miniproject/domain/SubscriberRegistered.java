@@ -18,6 +18,10 @@ public class SubscriberRegistered extends AbstractEvent {
 
     public SubscriberRegistered(Member aggregate) {
         super(aggregate);
+        this.userId = aggregate.getUserId();
+        this.bookId = aggregate.getBookId();
+        this.name = aggregate.getName();
+        this.subscribeStatus = aggregate.getSubscribeStatus();
     }
 
     public SubscriberRegistered() {
