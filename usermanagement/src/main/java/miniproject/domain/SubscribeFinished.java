@@ -16,6 +16,8 @@ public class SubscribeFinished extends AbstractEvent {
 
     public SubscribeFinished(Member aggregate) {
         super(aggregate);
+        this.userId = aggregate.getUserId();
+        this.subscribeStatus = aggregate.getSubscribeStatus();
     }
 
     public SubscribeFinished() {

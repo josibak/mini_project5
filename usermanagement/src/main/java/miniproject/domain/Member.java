@@ -68,22 +68,23 @@ private Boolean isKtUser;
     public void openBookPoint(OpenBookPointCommand openBookPointCommand){
         
         //implement business logic here:
+        this.bookId = command.getBookId();
+        this.subscribeStatus = command.getSubscribeStatus();
         
-
-
         PointBookOpened pointBookOpened = new PointBookOpened(this);
         pointBookOpened.publishAfterCommit();
     }
 //>>> Clean Arch / Port Method
 //<<< Clean Arch / Port Method
-    public void subscribtionRequest(SubscribtionRequestCommand subscribtionRequestCommand){
+    public void subscribtionRequest(SubscribtionRequestCommand command){
         
         //implement business logic here:
-        
+        this.subscribeStatus = command.getSubscribe();
 
-
-        SubscribtionRequested subscribtionRequested = new SubscribtionRequested(this);
-        subscribtionRequested.publishAfterCommit();
+        SubscribtionRequested event = new SubscribtionRequested(this);
+        event.publishAfterCommit();
+        // SubscribtionRequested subscribtionRequested = new SubscribtionRequested(this);
+        // subscribtionRequested.publishAfterCommit();
     }
 //>>> Clean Arch / Port Method
 //<<< Clean Arch / Port Method
@@ -94,9 +95,17 @@ private Boolean isKtUser;
 
         miniproject.external.MemberQuery memberQuery = new miniproject.external.MemberQuery();
         // memberQuery.set??()        
-          = MemberApplication.applicationContext
-            .getBean(miniproject.external.Service.class)
-            .member(memberQuery);
+        memberQuery.setEmail(registerMemberCommand.getEmail());
+
+        miniproject.external.MemberInfo result =
+            MemberApplication.applicationContext
+                .getBean(miniproject.external.Service.class)
+                .member(memberQuery);
+        
+        this.name = result.getName();
+        this.email = result.getEmail();
+        this.subscribeStatus = false;
+        this.isKtUser = result.getIsktUser();
 
         MemberRegistered memberRegistered = new MemberRegistered(this);
         memberRegistered.publishAfterCommit();
@@ -106,8 +115,9 @@ private Boolean isKtUser;
     public void authKt(AuthKtCommand authKtCommand){
         
         //implement business logic here:
-        
-
+        this.name = authKtCommand.getName();         // 선택 사항
+        this.email = authKtCommand.getEmail();       // 선택 사항
+        this.isKtUser = authKtCommand.getIsKtUser();
 
         KtAuthenticated ktAuthenticated = new KtAuthenticated(this);
         ktAuthenticated.publishAfterCommit();
@@ -117,8 +127,8 @@ private Boolean isKtUser;
     public void bookOpen(BookOpenCommand bookOpenCommand){
         
         //implement business logic here:
-        
-
+        this.bookId = bookOpenCommand.getBookId();
+        this.subscribeStatus = bookOpenCommand.getSubscribeStatus();
 
         BookOpened bookOpened = new BookOpened(this);
         bookOpened.publishAfterCommit();

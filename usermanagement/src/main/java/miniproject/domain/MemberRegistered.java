@@ -17,6 +17,9 @@ public class MemberRegistered extends AbstractEvent {
 
     public MemberRegistered(Member aggregate) {
         super(aggregate);
+        this.userId = aggregate.getUserId();
+        this.name = aggregate.getName();
+        this.email = aggregate.getEmail();
     }
 
     public MemberRegistered() {
