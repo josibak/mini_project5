@@ -38,18 +38,18 @@ public class MemberController {
     }
 
     @RequestMapping(
-        value = "/members/subscribtionrequest",
+        value = "/members/subscriptionrequest",
         method = RequestMethod.POST,
         produces = "application/json;charset=UTF-8"
     )
-    public Member subscribtionRequest(
+    public Member subscriptionRequest(
         HttpServletRequest request,
         HttpServletResponse response,
-        @RequestBody SubscribtionRequestCommand subscribtionRequestCommand
+        @RequestBody SubscriptionRequestCommand subscriptionRequestCommand
     ) throws Exception {
-        System.out.println("##### /member/subscribtionRequest  called #####");
+        System.out.println("##### /member/subscriptionRequest  called #####");
         Member member = new Member();
-        member.subscribtionRequest(subscribtionRequestCommand);
+        member.subscriptionRequest(subscriptionRequestCommand);
         memberRepository.save(member);
         return member;
     }

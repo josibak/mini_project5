@@ -25,15 +25,15 @@ public class PolicyHandler {
 
     @StreamListener(
         value = KafkaProcessor.INPUT,
-        condition = "headers['type']=='SubscribtionRequested'"
+        condition = "headers['type']=='SubscriptionRequested'"
     )
-    public void wheneverSubscribtionRequested_SubcriptionRequest(
+    public void wheneverSubscriptionRequested_SubcriptionRequest(
         @Payload SubscribtionRequested subscribtionRequested
     ) {
-        SubscribtionRequested event = subscribtionRequested;
+        SubscriptionRequested event = subscriptionRequested;
         System.out.println(
             "\n\n##### listener SubcriptionRequest : " +
-            subscribtionRequested +
+            subscriptionRequested +
             "\n\n"
         );
 

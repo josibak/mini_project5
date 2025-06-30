@@ -21,9 +21,9 @@ public class MemberHateoasProcessor
             Link
                 .of(
                     model.getRequiredLink("self").getHref() +
-                    "/subscribtionrequest"
+                    "/subscriptionrequest"
                 )
-                .withRel("subscribtionrequest")
+                .withRel("subscriptionrequest")
         );
         model.add(
             Link
