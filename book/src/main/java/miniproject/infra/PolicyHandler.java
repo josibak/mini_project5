@@ -1,9 +1,5 @@
 package miniproject.infra;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.naming.NameParser;
-import javax.naming.NameParser;
 import javax.transaction.Transactional;
 import miniproject.config.kafka.KafkaProcessor;
 import miniproject.domain.*;
@@ -30,49 +26,23 @@ public class PolicyHandler {
     public void wheneverPublicCompleted_PublishingCompleted(
         @Payload PublicCompleted publicCompleted
     ) {
-        PublicCompleted event = publicCompleted;
         System.out.println(
-            "\n\n##### listener PublishingCompleted : " +
-            publicCompleted +
-            "\n\n"
+            "\n\n##### listener PublishingCompleted : " + publicCompleted + "\n\n"
         );
-
-        // Sample Logic //
-        Book.publishingCompleted(event);
-    }
-
-    @StreamListener(
-        value = KafkaProcessor.INPUT,
-        condition = "headers['type']=='PointBookOpened'"
-    )
-    public void wheneverPointBookOpened_BookOpenedByPoint(
-        @Payload PointBookOpened pointBookOpened
-    ) {
-        PointBookOpened event = pointBookOpened;
-        System.out.println(
-            "\n\n##### listener BookOpenedByPoint : " + pointBookOpened + "\n\n"
-        );
-
-        // Sample Logic //
-        Book.bookOpenedByPoint(event);
+        Book.publishingCompleted(publicCompleted);
     }
 
     @StreamListener(
         value = KafkaProcessor.INPUT,
         condition = "headers['type']=='BookOpened'"
     )
-    public void wheneverBookOpened_BookOpenedBySubscription(
+    public void wheneverBookOpened_IncreaseViewCount(
         @Payload BookOpened bookOpened
     ) {
-        BookOpened event = bookOpened;
         System.out.println(
-            "\n\n##### listener BookOpenedBySubscription : " +
-            bookOpened +
-            "\n\n"
+            "\n\n##### listener IncreaseViewCount : " + bookOpened + "\n\n"
         );
-
-        // Sample Logic //
-        Book.bookOpenedBySubscription(event);
+        Book.increaseViewCount(bookOpened);
     }
 }
 //>>> Clean Arch / Inbound Adaptor
