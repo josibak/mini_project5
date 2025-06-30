@@ -8,10 +8,12 @@ import miniproject.infra.AbstractEvent;
 public class SubscriptionRequested extends AbstractEvent {
 
     private Long userId;
-    private Boolean subscribeStatus;
+    private String subscribeStatus;
 
-    public SubscriptionRequested(Member aggregate) {
-        super(aggregate);
+    public SubscriptionRequested(Long userId, String subscribeStatus) {
+        super();
+        this.userId = userId;
+        this.subscribeStatus = subscribeStatus;
     }
 
     public SubscriptionRequested() {

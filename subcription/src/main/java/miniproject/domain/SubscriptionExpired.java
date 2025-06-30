@@ -15,9 +15,6 @@ public class SubscriptionExpired extends AbstractEvent {
     private String userId;
     private Date subscriptionStartedAt;
     private Date subscriptionExpiredAt;
-    private String userId;
-    private Date subscriptionStartedAt;
-    private Date subscriptionExpiredAt;
 
     public SubscriptionExpired(Subcription aggregate) {
         super(aggregate);

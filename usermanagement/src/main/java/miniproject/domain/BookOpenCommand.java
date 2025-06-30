@@ -9,5 +9,5 @@ public class BookOpenCommand {
 
     private Long userId;
     private Long bookId;
-    private Boolean subscribeStatus;
+    private String subscribeStatus;
 }

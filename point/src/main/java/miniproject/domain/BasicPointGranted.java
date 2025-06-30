@@ -15,7 +15,6 @@ public class BasicPointGranted extends AbstractEvent {
     private Long userId;
     private Integer balance;
     private Integer amount;
-    private Integer amount;
 
     public BasicPointGranted(PointAccount aggregate) {
         super(aggregate);

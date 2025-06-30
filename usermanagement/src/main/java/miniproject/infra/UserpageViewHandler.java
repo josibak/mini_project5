@@ -30,8 +30,8 @@ public class UserpageViewHandler {
             userpage.setUserId(memberRegistered.getUserId());
             userpage.setName(memberRegistered.getName());
             userpage.setEmail(memberRegistered.getEmail());
-            userpage.setIsKtUser(NO);
-            userpage.setSubscripeStatus(NOTSUBSCRIBED);
+            userpage.setIsKtUser("NO");
+            userpage.setSubscribeStatus("NOTSUBSCRIBED");
             // view 레파지 토리에 save
             userpageRepository.save(userpage);
         } catch (Exception e) {

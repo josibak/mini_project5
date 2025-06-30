@@ -12,35 +12,25 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 
-
+@Data
 @Entity
 @Table(name="Member_table")
-@Data
-
-//<<< DDD / Aggregate Root
 public class Member  {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     
+    private Long userId;    
+       
+    private Long bookId;     
     
+    private String name;    
     
-private Long userId;    
+    private String email;    
     
+    private String subscribeStatus;    
     
-private Long bookId;    
-    
-    
-private String name;    
-    
-    
-private String email;    
-    
-    
-private String subscribeStatus;    
-    
-    
-private Boolean isKtUser;
+    private Boolean isKtUser;
 
     @PostPersist
     public void onPostPersist(){
@@ -79,13 +69,6 @@ private Boolean isKtUser;
         
         this.name = registerMemberCommand.getName();
         this.email = registerMemberCommand.getEmail();
-
-        miniproject.external.MemberQuery memberQuery = new miniproject.external.MemberQuery();
-        memberQuery.setName(this.name);
-        memberQuery.setEmail(this.email);
-
-        miniproject.external.Service service = MemberApplication.applicationContext.getBean(miniproject.external.Service.class);
-        service.member(memberQuery);
 
         MemberRegistered memberRegistered = new MemberRegistered(this);
         memberRegistered.publishAfterCommit();

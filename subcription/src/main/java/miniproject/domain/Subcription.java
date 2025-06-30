@@ -48,7 +48,7 @@ public class Subcription {
 
     //<<< Clean Arch / Port Method
     public static void subcriptionRequest(
-        SubscribtionRequested subscribtionRequested
+        SubscriptionRequested subscribtionRequested
     ) {
         //implement business logic here:
 

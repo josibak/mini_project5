@@ -14,7 +14,7 @@ public class SubscriptionRequested extends AbstractEvent {
     private Long userId;
     private Boolean subscribe;
 
-    public SubscrptionRequested(Member aggregate) {
+    public SubscriptionRequested(Member aggregate) {
         super(aggregate);
     }
 

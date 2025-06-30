@@ -27,8 +27,9 @@ public class PolicyHandler {
         value = KafkaProcessor.INPUT,
         condition = "headers['type']=='SubscriptionRequested'"
     )
+
     public void wheneverSubscriptionRequested_SubcriptionRequest(
-        @Payload SubscribtionRequested subscribtionRequested
+        @Payload SubscriptionRequested subscriptionRequested
     ) {
         SubscriptionRequested event = subscriptionRequested;
         System.out.println(
@@ -41,4 +42,3 @@ public class PolicyHandler {
         Subcription.subcriptionRequest(event);
     }
 }
-//>>> Clean Arch / Inbound Adaptor
