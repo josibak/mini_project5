@@ -5,7 +5,7 @@ import java.util.*;
 import lombok.Data;
 
 @Data
-public class SubscribtionRequestCommand {
+public class SubscriptionRequestCommand {
 
     private Long userId;
     private Boolean subscribeStatus;

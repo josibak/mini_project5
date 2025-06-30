@@ -9,16 +9,16 @@ import miniproject.infra.AbstractEvent;
 //<<< DDD / Domain Event
 @Data
 @ToString
-public class SubscribtionRequested extends AbstractEvent {
+public class SubscriptionRequested extends AbstractEvent {
 
     private Long userId;
     private Boolean subscribe;
 
-    public SubscribtionRequested(Member aggregate) {
+    public SubscrptionRequested(Member aggregate) {
         super(aggregate);
     }
 
-    public SubscribtionRequested() {
+    public SubscriptionRequested() {
         super();
     }
 }

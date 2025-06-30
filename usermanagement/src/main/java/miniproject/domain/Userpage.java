@@ -21,7 +21,4 @@ public class Userpage {
     private String subscribeStatus;
     private String isKtUser;
     private String pointBalance;
-    private String pointBalance;
-    private String pointBalance;
-    private String pointBalance;
 }

@@ -37,7 +37,7 @@ private String name;
 private String email;    
     
     
-private Boolean subscribeStatus;    
+private String subscribeStatus;    
     
     
 private Boolean isKtUser;
@@ -49,12 +49,8 @@ private Boolean isKtUser;
         SubscriberRegistered subscriberRegistered = new SubscriberRegistered(this);
         subscriberRegistered.publishAfterCommit();
 
-
-
         SubscribeFinished subscribeFinished = new SubscribeFinished(this);
         subscribeFinished.publishAfterCommit();
-
-    
     }
 
     public static MemberRepository repository(){
@@ -62,70 +58,55 @@ private Boolean isKtUser;
         return memberRepository;
     }
 
-
-
-//<<< Clean Arch / Port Method
     public void openBookPoint(OpenBookPointCommand openBookPointCommand){
-        
-        //implement business logic here:
-        
 
+        this.bookId = openBookPointCommand.getBookId();
+        this.subscribeStatus = openBookPointCommand.getSubscribeStatus();
 
         PointBookOpened pointBookOpened = new PointBookOpened(this);
         pointBookOpened.publishAfterCommit();
     }
-//>>> Clean Arch / Port Method
-//<<< Clean Arch / Port Method
-    public void subscribtionRequest(SubscribtionRequestCommand subscribtionRequestCommand){
-        
-        //implement business logic here:
-        
 
+    public void subscriptionRequest(SubscriptionRequestCommand subscriptionRequestCommand){
+        
+        this.subscribeStatus = subscriptionRequestCommand.getSubscribeStatus();
 
-        SubscribtionRequested subscribtionRequested = new SubscribtionRequested(this);
-        subscribtionRequested.publishAfterCommit();
+        SubscriptionRequested subscriptionRequested = new SubscriptionRequested(this);
+        subscriptionRequested.publishAfterCommit();
     }
-//>>> Clean Arch / Port Method
-//<<< Clean Arch / Port Method
+
     public void registerMember(RegisterMemberCommand registerMemberCommand){
         
-        //implement business logic here:
-        
+        this.name = registerMemberCommand.getName();
+        this.email = registerMemberCommand.getEmail();
 
         miniproject.external.MemberQuery memberQuery = new miniproject.external.MemberQuery();
-        // memberQuery.set??()        
-          = MemberApplication.applicationContext
-            .getBean(miniproject.external.Service.class)
-            .member(memberQuery);
+        memberQuery.setName(this.name);
+        memberQuery.setEmail(this.email);
+
+        miniproject.external.Service service = MemberApplication.applicationContext.getBean(miniproject.external.Service.class);
+        service.member(memberQuery);
 
         MemberRegistered memberRegistered = new MemberRegistered(this);
         memberRegistered.publishAfterCommit();
     }
-//>>> Clean Arch / Port Method
-//<<< Clean Arch / Port Method
-    public void authKt(AuthKtCommand authKtCommand){
-        
-        //implement business logic here:
-        
 
+    public void authKt(AuthKtCommand authKtCommand){
+
+        this.name = authKtCommand.getName();
+        this.email = authKtCommand.getEmail();
+        this.isKtUser = authKtCommand.getIsKtUser();
 
         KtAuthenticated ktAuthenticated = new KtAuthenticated(this);
         ktAuthenticated.publishAfterCommit();
     }
-//>>> Clean Arch / Port Method
-//<<< Clean Arch / Port Method
-    public void bookOpen(BookOpenCommand bookOpenCommand){
-        
-        //implement business logic here:
-        
 
+    public void bookOpen(BookOpenCommand bookOpenCommand){
+
+        this.bookId = bookOpenCommand.getBookId();
+        this.subscribeStatus = bookOpenCommand.getSubscribeStatus();
 
         BookOpened bookOpened = new BookOpened(this);
         bookOpened.publishAfterCommit();
     }
-//>>> Clean Arch / Port Method
-
-
-
 }
-//>>> DDD / Aggregate Root
