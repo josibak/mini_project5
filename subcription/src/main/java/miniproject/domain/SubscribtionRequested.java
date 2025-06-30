@@ -9,6 +9,21 @@ import miniproject.infra.AbstractEvent;
 @ToString
 public class SubscribtionRequested extends AbstractEvent {
 
+    private Long subscribeId;
     private Long userId;
-    private Boolean subscribe;
+    private Date subscriptionStartedAt;
+    private Date subscriptionExpiredAt;
+    private String status;
+
+    public SubscribtionRequested(Subcription aggregate) {
+        super(aggregate);
+        this.subscribeId = aggregate.getSubscribeId();
+        this.userId = aggregate.getUserId();
+        this.subscriptionStartedAt = aggregate.getSubscriptionStartedAt();
+        this.subscriptionExpiredAt = aggregate.getSubscriptionExpiredAt();
+        this.status = aggregate.getStatus();
+    } 
+    public SubscribtionRequested() {
+        super();
+    }
 }

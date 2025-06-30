@@ -10,4 +10,6 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
     path = "subcriptions"
 )
 public interface SubcriptionRepository
-    extends PagingAndSortingRepository<Subcription, Long> {}
+    extends PagingAndSortingRepository<Subcription, Long> {
+        Subcription findTopByUserIdOrderBySubscribeIdDesc(Long userId);
+}
