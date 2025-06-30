@@ -4,23 +4,34 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+
+import miniproject.config.kafka.KafkaProcessor;
 import miniproject.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.integration.support.MessageBuilder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 //<<< Clean Arch / Inbound Adaptor
 
 @RestController
+@RequestMapping("/books") 
 @Transactional
 public class BookController {
 
     @Autowired
     KafkaProcessor kafkaProcessor;
 
+    @Autowired
+    BookRepository bookRepository;
+
+    //도서등록
+    @PostMapping("")
+    public Book createBook(@RequestBody Book book) {
+    return bookRepository.save(book);
+    }
+
     // 도서 열람 API
-    @PostMapping("/books/{id}/open")
+    @PostMapping("/{id}/open")
     public void openBook(
             @PathVariable("id") Long bookId,
             @RequestBody OpenBookRequest request

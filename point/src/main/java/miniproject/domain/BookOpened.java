@@ -8,11 +8,10 @@ import miniproject.infra.AbstractEvent;
 @ToString
 public class BookOpened extends AbstractEvent {
     private Long bookId;
-    private String title;
     private Long userId;
     private Boolean subscribeStatus;
     
     public boolean validate() {
-        return bookId != null && userId != null && title != null;
+    return bookId != null && userId != null;
     }
 }

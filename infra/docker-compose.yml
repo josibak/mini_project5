@@ -51,5 +51,21 @@ services:
       - ../maven-repo:/root/.m2
     command: mvn spring-boot:run
 
+  book:
+    build:
+      context: ../book
+    container_name: book
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - kafka
+    working_dir: /usr/src
+    volumes:
+      - ../book:/usr/src
+      - ../maven-repo:/root/.m2
+    command: mvn spring-boot:run
+    
 volumes:
   kafka-data:
