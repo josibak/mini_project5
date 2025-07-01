@@ -9,7 +9,7 @@ import org.springframework.context.ApplicationContext;
 
 @SpringBootApplication
 @EnableBinding(KafkaProcessor.class)
-@EnableFeignClients
+@EnableFeignClients(basePackages = "miniproject.external")
 public class UsermanagementApplication {
 
     public static ApplicationContext applicationContext;

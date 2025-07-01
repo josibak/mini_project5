@@ -29,7 +29,7 @@ public class MemberController {
         @PathVariable(value="id") Long id,
         @RequestBody OpenBookPointCommand command,
         HttpServletRequest request,
-        HttpServletResponse response,
+        HttpServletResponse response
         // @RequestBody OpenBookPointCommand openBookPointCommand
     ) throws Exception {
         System.out.println("##### /member/openBookPoint  called #####");
@@ -37,7 +37,7 @@ public class MemberController {
         Optional<Member> optionalMember = memberRepository.findById(id);
         if (!optionalMember.isPresent()) throw new Exception("Member not found");
 
-        Member member = OptionalMember.get();
+        Member member = optionalMember.get();
         member.openBookPoint(command);
         memberRepository.save(member);
         return member;

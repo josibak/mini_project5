@@ -42,6 +42,10 @@ private Boolean subscribeStatus;
     
 private Boolean isKtUser;
 
+
+@Transient
+public Object Repository;
+
     @PostPersist
     public void onPostPersist(){
 
@@ -65,7 +69,7 @@ private Boolean isKtUser;
 
 
 //<<< Clean Arch / Port Method
-    public void openBookPoint(OpenBookPointCommand openBookPointCommand){
+    public void openBookPoint(OpenBookPointCommand command){
         
         //implement business logic here:
         this.bookId = command.getBookId();
@@ -74,8 +78,8 @@ private Boolean isKtUser;
         PointBookOpened pointBookOpened = new PointBookOpened(this);
         pointBookOpened.publishAfterCommit();
     }
-//>>> Clean Arch / Port Method
-//<<< Clean Arch / Port Method
+
+
     public void subscribtionRequest(SubscribtionRequestCommand command){
         
         //implement business logic here:
@@ -86,32 +90,29 @@ private Boolean isKtUser;
         // SubscribtionRequested subscribtionRequested = new SubscribtionRequested(this);
         // subscribtionRequested.publishAfterCommit();
     }
-//>>> Clean Arch / Port Method
-//<<< Clean Arch / Port Method
+
+    
     public void registerMember(RegisterMemberCommand registerMemberCommand){
         
         //implement business logic here:
         
-
         miniproject.external.MemberQuery memberQuery = new miniproject.external.MemberQuery();
         // memberQuery.set??()        
         memberQuery.setEmail(registerMemberCommand.getEmail());
 
         miniproject.external.MemberInfo result =
-            MemberApplication.applicationContext
-                .getBean(miniproject.external.Service.class)
-                .member(memberQuery);
+            miniproject.external.ServiceProvider.INSTANCE.member(memberQuery);
         
         this.name = result.getName();
         this.email = result.getEmail();
         this.subscribeStatus = false;
-        this.isKtUser = result.getIsktUser();
+        this.isKtUser = result.getIsKtUser();
 
         MemberRegistered memberRegistered = new MemberRegistered(this);
         memberRegistered.publishAfterCommit();
     }
-//>>> Clean Arch / Port Method
-//<<< Clean Arch / Port Method
+
+    
     public void authKt(AuthKtCommand authKtCommand){
         
         //implement business logic here:
@@ -122,8 +123,8 @@ private Boolean isKtUser;
         KtAuthenticated ktAuthenticated = new KtAuthenticated(this);
         ktAuthenticated.publishAfterCommit();
     }
-//>>> Clean Arch / Port Method
-//<<< Clean Arch / Port Method
+
+    
     public void bookOpen(BookOpenCommand bookOpenCommand){
         
         //implement business logic here:
