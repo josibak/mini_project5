@@ -1,20 +1,14 @@
 package miniproject.domain;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDate;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import javax.persistence.*;
 import lombok.Data;
 import miniproject.AipublicationApplication;
-import miniproject.domain.PublicCompleted;
+import miniproject.service.AIPublicationService;
 
 @Entity
 @Table(name = "Publication_table")
 @Data
-//<<< DDD / Aggregate Root
 public class Publication {
 
     @Id
@@ -22,32 +16,59 @@ public class Publication {
     private Long publicationId;
 
     private Long manuscriptId;
-
     private String summary;
-
     private String postUrl;
-
     private String title;
-
-    private String authorId;
-
+    private Long authorId;
     private Date publicAt;
-
     private String content;
-
     private String bookId;
+    private String status;
 
-    @PostPersist
-    public void onPostPersist() {
+    public static PublicationRepository repository() {
+        return AipublicationApplication.applicationContext.getBean(PublicationRepository.class);
+    }
+
+    // 1. 출간 요청시: 출간정보 저장 + 표지자동등록요청됨 이벤트 발행
+    public static Publication publicRequest(PublicationRequested event) {
+        Publication publication = new Publication();
+        publication.setManuscriptId(event.getManuscriptId());
+        publication.setTitle(event.getTitle());
+        publication.setContent(event.getContent());
+        publication.setAuthorId(event.getAuthorId());
+        publication.setStatus("requested");
+        repository().save(publication);
+
+        // 이벤트 발행
+        AiRequested aiRequested = new AiRequested(publication);
+        aiRequested.publishAfterCommit();
+
+        return publication;
+    }
+
+    // 2. 표지자동등록요청됨 이벤트 수신: AI 결과 반영 + status "ai_ready"
+    public static void aiRequest(AiRequested event) {
+        repository().findById(event.getPublicationId()).ifPresent(publication -> {
+            AIPublicationService aiService = AipublicationApplication.applicationContext.getBean(AIPublicationService.class);
+
+            String summary = aiService.generateSummary(publication.getContent());
+            String coverUrl = aiService.generateCover(publication.getTitle(), publication.getContent());
+
+            publication.setSummary(summary);
+            publication.setPostUrl(coverUrl);
+            publication.setStatus("ai_ready");  // AI 작업 완료 상태
+            repository().save(publication);
+        });
+    }
+
+    // 3. 출간 작업 완료: status "completed" + 출간 작업 완료됨 이벤트 발행
+    public void publicComplete(PublicCompleteCommand publicCompleteCommand) {
+        this.status = "completed";
+        this.publicAt = new Date();
+        repository().save(this);
+
         PublicCompleted publicCompleted = new PublicCompleted(this);
         publicCompleted.publishAfterCommit();
     }
-
-    public static PublicationRepository repository() {
-        PublicationRepository publicationRepository = AipublicationApplication.applicationContext.getBean(
-            PublicationRepository.class
-        );
-        return publicationRepository;
-    }
 }
-//>>> DDD / Aggregate Root
+
