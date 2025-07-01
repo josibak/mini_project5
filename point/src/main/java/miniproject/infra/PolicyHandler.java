@@ -1,74 +1,70 @@
 package miniproject.infra;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.naming.NameParser;
-import javax.naming.NameParser;
-import javax.transaction.Transactional;
 import miniproject.config.kafka.KafkaProcessor;
-import miniproject.domain.*;
+import miniproject.domain.PointService;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
-//<<< Clean Arch / Inbound Adaptor
 @Service
-@Transactional
 public class PolicyHandler {
 
     @Autowired
-    PointAccountRepository pointAccountRepository;
+    PointService pointService;
+
+    ObjectMapper objectMapper = new ObjectMapper();
 
     @StreamListener(KafkaProcessor.INPUT)
-    public void whatever(@Payload String eventString) {}
-
-    @StreamListener(
-        value = KafkaProcessor.INPUT,
-        condition = "headers['type']=='PointBookOpened'"
-    )
-    public void wheneverPointBookOpened_BookOpenedByPoint(
-        @Payload PointBookOpened pointBookOpened
-    ) {
-        PointBookOpened event = pointBookOpened;
-        System.out.println(
-            "\n\n##### listener BookOpenedByPoint : " + pointBookOpened + "\n\n"
-        );
-
-        // Sample Logic //
-        PointAccount.bookOpenedByPoint(event);
+    public void whatever(@Payload String eventString) {
+        // Just a fallback catch-all method
     }
 
-    @StreamListener(
-        value = KafkaProcessor.INPUT,
-        condition = "headers['type']=='MemberRegistered'"
-    )
-    public void wheneverMemberRegistered_UserRegistered(
-        @Payload MemberRegistered memberRegistered
-    ) {
-        MemberRegistered event = memberRegistered;
-        System.out.println(
-            "\n\n##### listener UserRegistered : " + memberRegistered + "\n\n"
-        );
+    @StreamListener(KafkaProcessor.INPUT)
+    public void wheneverUserRegistered_InitializeAccount(@Payload String eventString) {
+        try {
+            JSONObject eventJson = new JSONObject(eventString);
+            if (!eventJson.has("eventType") || !eventJson.getString("eventType").equals("UserRegistered")) return;
 
-        // Sample Logic //
-        PointAccount.userRegistered(event);
+            Long userId = eventJson.getLong("userId");
+            boolean isKtMember = eventJson.optBoolean("isKtMember", false);
+            pointService.initializeAccount(userId, isKtMember);
+
+        } catch (Exception e) {
+            System.out.println("Error handling UserRegistered: " + e.getMessage());
+        }
     }
 
-    @StreamListener(
-        value = KafkaProcessor.INPUT,
-        condition = "headers['type']=='KtAuthenticated'"
-    )
-    public void wheneverKtAuthenticated_KtMemberVerified(
-        @Payload KtAuthenticated ktAuthenticated
-    ) {
-        KtAuthenticated event = ktAuthenticated;
-        System.out.println(
-            "\n\n##### listener KtMemberVerified : " + ktAuthenticated + "\n\n"
-        );
+    @StreamListener(KafkaProcessor.INPUT)
+    public void wheneverBookOpened_HandleDeduction(@Payload String eventString) {
+        try {
+            JSONObject eventJson = new JSONObject(eventString);
+            if (!eventJson.has("eventType") || !eventJson.getString("eventType").equals("BookOpened")) return;
 
-        // Sample Logic //
-        PointAccount.ktMemberVerified(event);
+            Long userId = eventJson.getLong("userId");
+            Long bookId = eventJson.getLong("bookId");
+            boolean isSubscriber = eventJson.getBoolean("isSubscriber");
+
+            pointService.handleBookOpened(userId, bookId, isSubscriber);
+
+        } catch (Exception e) {
+            System.out.println("Error handling BookOpened: " + e.getMessage());
+        }
+    }
+
+    @StreamListener(KafkaProcessor.INPUT)
+    public void wheneverKtVerified_AddBonus(@Payload String eventString) {
+        try {
+            JSONObject eventJson = new JSONObject(eventString);
+            if (!eventJson.has("eventType") || !eventJson.getString("eventType").equals("KtVerified")) return;
+
+            Long userId = eventJson.getLong("userId");
+            pointService.addKtBonus(userId);
+
+        } catch (Exception e) {
+            System.out.println("Error handling KtVerified: " + e.getMessage());
+        }
     }
 }
-//>>> Clean Arch / Inbound Adaptor
