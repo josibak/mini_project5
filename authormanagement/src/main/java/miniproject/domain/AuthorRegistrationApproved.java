@@ -11,7 +11,6 @@ import miniproject.infra.AbstractEvent;
 public class AuthorRegistrationApproved extends AbstractEvent {
 
     private Long authorId;
-    private Author.RegistrationStatus registrationStatus;
 
     public AuthorRegistrationApproved(Author aggregate) {
         super(aggregate);

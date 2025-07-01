@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-// @RequestMapping(value="/authors")
+@RequestMapping(value="/authors")
 @Transactional
 public class AuthorController {
 
@@ -18,7 +18,7 @@ public class AuthorController {
     AuthorRepository authorRepository;
 
     @RequestMapping(
-        value = "/authors",
+        value = "",
         method = RequestMethod.POST,
         produces = "application/json;charset=UTF-8"
     )
@@ -27,21 +27,14 @@ public class AuthorController {
         HttpServletResponse response,
         @RequestBody RequestAuthorRegistrationCommand requestAuthorRegistrationCommand
     ) throws Exception {
-        System.out.println(
-            "##### /author/requestAuthorRegistration  called #####"
-        );
         Author author = new Author();
-        author.setName(requestAuthorRegistrationCommand.getName());
-        author.setBio(requestAuthorRegistrationCommand.getBio());
-        author.setPortfolio(requestAuthorRegistrationCommand.getPortfolio());
-        author.setRegistrationStatus(Author.RegistrationStatus.PENDING);
-        //author.requestAuthorRegistration(requestAuthorRegistrationCommand);
+        author.requestAuthorRegistration(requestAuthorRegistrationCommand);
         authorRepository.save(author);
         return author;
     }
 
     @RequestMapping(
-        value = "/authors/{id}/approveauthorregistration",
+        value = "/{id}/approveauthorregistration",
         method = RequestMethod.PUT,
         produces = "application/json;charset=UTF-8"
     )
@@ -50,22 +43,18 @@ public class AuthorController {
         HttpServletRequest request,
         HttpServletResponse response
     ) throws Exception {
-        System.out.println(
-            "##### /author/approveAuthorRegistration  called #####"
-        );
         Optional<Author> optionalAuthor = authorRepository.findById(id);
 
         optionalAuthor.orElseThrow(() -> new Exception("No Entity Found"));
         Author author = optionalAuthor.get();
-        author.setRegistrationStatus(Author.RegistrationStatus.APPROVED);
-        //author.approveAuthorRegistration(approveAuthorRegistrationCommand);
+        author.approveAuthorRegistration();
 
         authorRepository.save(author);
         return author;
     }
 
     @RequestMapping(
-        value = "/authors/{id}/rejectauthorregistration",
+        value = "/{id}/rejectauthorregistration",
         method = RequestMethod.PUT,
         produces = "application/json;charset=UTF-8"
     )
@@ -74,17 +63,14 @@ public class AuthorController {
         HttpServletRequest request,
         HttpServletResponse response
     ) throws Exception {
-        System.out.println(
-            "##### /author/rejectAuthorRegistration  called #####"
-        );
         Optional<Author> optionalAuthor = authorRepository.findById(id);
 
         optionalAuthor.orElseThrow(() -> new Exception("No Entity Found"));
         Author author = optionalAuthor.get();
-        author.setRegistrationStatus(Author.RegistrationStatus.REJECTED);
-        //author.rejectAuthorRegistration(rejectAuthorRegistrationCommand);
+        author.rejectAuthorRegistration();
 
         authorRepository.save(author);
         return author;
     }
+
 }

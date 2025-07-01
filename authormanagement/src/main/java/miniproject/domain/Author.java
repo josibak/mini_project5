@@ -42,32 +42,28 @@ public class Author {
         APPROVED,
         REJECTED
     }
-
-    public void requestAuthorRegistration(
-        RequestAuthorRegistrationCommand requestAuthorRegistrationCommand
-    ) {
-        AuthorRegistrationRequested authorRegistrationRequested = new AuthorRegistrationRequested(
-            this
-        );
-        authorRegistrationRequested.publishAfterCommit();
+    
+    public void requestAuthorRegistration(RequestAuthorRegistrationCommand requestAuthorRegistrationCommand) {
+        this.name = requestAuthorRegistrationCommand.getName();
+        this.bio = requestAuthorRegistrationCommand.getBio();
+        this.portfolio = requestAuthorRegistrationCommand.getPortfolio();
+        this.registrationStatus = RegistrationStatus.PENDING;
     }
 
-    public void approveAuthorRegistration(
-       
-    ) {
-        AuthorRegistrationApproved authorRegistrationApproved = new AuthorRegistrationApproved(
-            this
-        );
+    public void approveAuthorRegistration() {
+        if (this.registrationStatus != RegistrationStatus.PENDING) {
+            throw new IllegalStateException("승인 또는 거절은 PENDING 상태에서만 가능합니다.");
+        }
+        this.registrationStatus = RegistrationStatus.APPROVED;
+        AuthorRegistrationApproved authorRegistrationApproved = new AuthorRegistrationApproved(this);
         authorRegistrationApproved.publishAfterCommit();
     }
 
-    public void rejectAuthorRegistration(
-        
-    ) {
-        AuthorRegistrationRejected authorRegistrationRejected = new AuthorRegistrationRejected(
-            this
-        );
-        authorRegistrationRejected.publishAfterCommit();
+    public void rejectAuthorRegistration() {
+        if (this.registrationStatus != RegistrationStatus.PENDING) {
+            throw new IllegalStateException("승인 또는 거절은 PENDING 상태에서만 가능합니다.");
+        }
+        this.registrationStatus = RegistrationStatus.REJECTED;
     }
 
 }
