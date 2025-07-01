@@ -28,11 +28,11 @@ public class Subcription {
 
     private Date subscriptionExpiredAt;
 
+    private String status;
+
     @PostPersist
     public void onPostPersist() {
-        SubcriptionCompleted subcriptionCompleted = new SubcriptionCompleted(
-            this
-        );
+        SubcriptionCompleted subcriptionCompleted = new SubcriptionCompleted(this);
         subcriptionCompleted.publishAfterCommit();
 
         SubscriptionExpired subscriptionExpired = new SubscriptionExpired(this);
@@ -47,30 +47,24 @@ public class Subcription {
     }
 
     //<<< Clean Arch / Port Method
-    public static void subcriptionRequest(
-        SubscribtionRequested subscribtionRequested
-    ) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        Subcription subcription = new Subcription();
-        repository().save(subcription);
-
-        */
-
-        /** Example 2:  finding and process
-        
-
-        repository().findById(subscribtionRequested.get???()).ifPresent(subcription->{
-            
-            subcription // do something
-            repository().save(subcription);
-
-
-         });
-        */
-
+    public static void subcriptionRequest(SubscribtionRequested subscribtionRequested) {
+        // 이벤트만 발행, 상태 변경/저장 X
+        subscribtionRequested.publishAfterCommit();
     }
+
+
+    public static void SubcriptionComplete(SubcriptionCompleted subcriptionCompleted) {
+        SubcriptionRepository subcriptionRepository = repository();
+        Subcription subcription = subcriptionRepository.findTopByUserIdOrderBySubscribeIdDesc(subcriptionCompleted.getUserId());
+        if (subcription != null) {
+            subcription.setStatus("active");
+            subcriptionRepository.save(subcription);
+        }
+        // 이벤트 재발행 제거!
+        // SubcriptionCompleted subcriptionCompletedEvent = new SubcriptionCompleted(subcription);
+        // subcriptionCompletedEvent.publishAfterCommit();
+    }
+    
     //>>> Clean Arch / Port Method
 
 }
