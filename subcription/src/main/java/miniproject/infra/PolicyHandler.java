@@ -41,7 +41,7 @@ public class PolicyHandler {
         subcription.setUserId(subscribtionRequested.getUserId());
         subcription.setSubscriptionStartedAt(new java.util.Date());
         subcription.setSubscriptionExpiredAt(new java.util.Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 30));
-        subcription.setStatus("requested");
+        subcription.setStatus("ACTIVE");
         subcriptionRepository.save(subcription);
 
         // SubcriptionCompleted 이벤트 발행
@@ -49,20 +49,6 @@ public class PolicyHandler {
         completed.publishAfterCommit();
     }
 
-    @StreamListener(
-        value = KafkaProcessor.INPUT,
-        condition = "headers['type']=='SubcriptionCompleted'"
-    )
-    public void wheneverSubcriptionCompleted_SubcriptionComplete(
-        @Payload SubcriptionCompleted subcriptionCompleted
-    ) {
-        System.out.println(
-            "\n\n##### listener ActivateStatus : " +
-            subcriptionCompleted +
-            "\n\n"
-        );
-        // 도메인 메서드 호출
-        Subcription.SubcriptionComplete(subcriptionCompleted);
-    }
+
 }
 //>>> Clean Arch / Inbound Adaptor

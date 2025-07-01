@@ -30,15 +30,6 @@ public class Subcription {
 
     private String status;
 
-    @PostPersist
-    public void onPostPersist() {
-        SubcriptionCompleted subcriptionCompleted = new SubcriptionCompleted(this);
-        subcriptionCompleted.publishAfterCommit();
-
-        SubscriptionExpired subscriptionExpired = new SubscriptionExpired(this);
-        subscriptionExpired.publishAfterCommit();
-    }
-
     public static SubcriptionRepository repository() {
         SubcriptionRepository subcriptionRepository = SubcriptionApplication.applicationContext.getBean(
             SubcriptionRepository.class
@@ -52,19 +43,6 @@ public class Subcription {
         subscribtionRequested.publishAfterCommit();
     }
 
-
-    public static void SubcriptionComplete(SubcriptionCompleted subcriptionCompleted) {
-        SubcriptionRepository subcriptionRepository = repository();
-        Subcription subcription = subcriptionRepository.findTopByUserIdOrderBySubscribeIdDesc(subcriptionCompleted.getUserId());
-        if (subcription != null) {
-            subcription.setStatus("active");
-            subcriptionRepository.save(subcription);
-        }
-        // 이벤트 재발행 제거!
-        // SubcriptionCompleted subcriptionCompletedEvent = new SubcriptionCompleted(subcription);
-        // subcriptionCompletedEvent.publishAfterCommit();
-    }
-    
     //>>> Clean Arch / Port Method
 
 }
