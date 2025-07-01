@@ -1,127 +1,81 @@
 package miniproject.domain;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import javax.persistence.*;
 import lombok.Data;
 import miniproject.PointApplication;
-import miniproject.domain.BasicPointGranted;
-import miniproject.domain.KtPointGranted;
-import miniproject.domain.PointDeducted;
+import miniproject.domain.events.*;
+import miniproject.external.BookService;
+import miniproject.external.BookInfo;
 
 @Entity
 @Table(name = "PointAccount_table")
 @Data
-//<<< DDD / Aggregate Root
 public class PointAccount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long pointAccountId;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long userId;
 
-    private Integer balance;
+    private Integer balance = 0;
 
     public static PointAccountRepository repository() {
-        PointAccountRepository pointAccountRepository = PointApplication.applicationContext.getBean(
-            PointAccountRepository.class
-        );
-        return pointAccountRepository;
+        return PointApplication.applicationContext.getBean(PointAccountRepository.class);
     }
 
-    //<<< Clean Arch / Port Method
-    public static void bookOpenedByPoint(PointBookOpened pointBookOpened) {
-        //implement business logic here:
+    // 회원가입 시 포인트 계좌 생성 및 기본 포인트 지급
+    public static void userRegistered(MemberRegistered event) {
+        PointAccount account = new PointAccount();
+        account.setUserId(event.getUserId());
+        account.setBalance(1000);  // 초기 잔액
 
-        /** Example 1:  new item 
-        PointAccount pointAccount = new PointAccount();
-        repository().save(pointAccount);
+        repository().save(account);
 
-        PointDeducted pointDeducted = new PointDeducted(pointAccount);
-        pointDeducted.publishAfterCommit();
-        */
-
-        /** Example 2:  finding and process
-        
-
-        repository().findById(pointBookOpened.get???()).ifPresent(pointAccount->{
-            
-            pointAccount // do something
-            repository().save(pointAccount);
-
-            PointDeducted pointDeducted = new PointDeducted(pointAccount);
-            pointDeducted.publishAfterCommit();
-
-         });
-        */
-
+        BasicPointGranted granted = new BasicPointGranted(account);
+        granted.publishAfterCommit();
     }
 
-    //>>> Clean Arch / Port Method
-    //<<< Clean Arch / Port Method
-    public static void userRegistered(MemberRegistered memberRegistered) {
-        //implement business logic here:
+    // KT 인증 시 보너스 포인트 지급
+    public static void ktMemberVerified(KtAuthenticated event) {
+        Optional<PointAccount> optional = repository().findByUserId(event.getUserId());
+        if (optional.isPresent()) {
+            PointAccount account = optional.get();
+            account.setBalance(account.getBalance() + 1000); // KT 보너스 1000P
+            repository().save(account);
 
-        /** Example 1:  new item 
-        PointAccount pointAccount = new PointAccount();
-        repository().save(pointAccount);
-
-        BasicPointGranted basicPointGranted = new BasicPointGranted(pointAccount);
-        basicPointGranted.publishAfterCommit();
-        */
-
-        /** Example 2:  finding and process
-        
-
-        repository().findById(memberRegistered.get???()).ifPresent(pointAccount->{
-            
-            pointAccount // do something
-            repository().save(pointAccount);
-
-            BasicPointGranted basicPointGranted = new BasicPointGranted(pointAccount);
-            basicPointGranted.publishAfterCommit();
-
-         });
-        */
-
+            KtPointGranted granted = new KtPointGranted(account);
+            granted.publishAfterCommit();
+        }
     }
 
-    //>>> Clean Arch / Port Method
-    //<<< Clean Arch / Port Method
-    public static void ktMemberVerified(KtAuthenticated ktAuthenticated) {
-        //implement business logic here:
+    // 책 열람 시 포인트 차감
+    public static void bookOpenedByPoint(PointBookOpened event) {
+        Optional<PointAccount> optional = repository().findByUserId(event.getUserId());
+        if (optional.isPresent()) {
+            PointAccount account = optional.get();
 
-        /** Example 1:  new item 
-        PointAccount pointAccount = new PointAccount();
-        repository().save(pointAccount);
+            // 외부 Book 서비스에서 도서 정보 조회 (FeignClient or Stub)
+            BookService bookService = PointApplication.applicationContext.getBean(BookService.class);
+            BookInfo book = bookService.getBookInfo(event.getBookId());
 
-        KtPointGranted ktPointGranted = new KtPointGranted(pointAccount);
-        ktPointGranted.publishAfterCommit();
-        */
+            // int cost = book.getIsBestSeller() ? 1500 : 1000;
+            int cost = 500;
 
-        /** Example 2:  finding and process
-        
 
-        repository().findById(ktAuthenticated.get???()).ifPresent(pointAccount->{
-            
-            pointAccount // do something
-            repository().save(pointAccount);
+            if (account.getBalance() >= cost) {
+                account.setBalance(account.getBalance() - cost);
+                repository().save(account);
 
-            KtPointGranted ktPointGranted = new KtPointGranted(pointAccount);
-            ktPointGranted.publishAfterCommit();
-
-         });
-        */
-
+                PointDeducted deducted = new PointDeducted(account);
+                deducted.setBookId(event.getBookId());
+                deducted.publishAfterCommit();
+            } else {
+                PointInsufficient insufficient = new PointInsufficient(account);
+                insufficient.setBookId(event.getBookId());
+                insufficient.publishAfterCommit();
+            }
+        }
     }
-    //>>> Clean Arch / Port Method
-
 }
-//>>> DDD / Aggregate Root
