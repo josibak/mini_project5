@@ -1,5 +1,6 @@
 package miniproject.infra;
 
+import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -70,6 +71,29 @@ public class AuthorController {
         author.rejectAuthorRegistration();
 
         authorRepository.save(author);
+        return author;
+    }
+
+    // 대기 상태의 작가들만 조회
+    @RequestMapping(
+        value = "",
+        method = RequestMethod.GET,
+        produces = "application/json;charset=UTF-8"
+    )
+    public List<Author> getAuthors() throws Exception {
+        return authorRepository.findByRegistrationStatus(Author.RegistrationStatus.PENDING);
+    }
+
+    @RequestMapping(
+        value = "/{id}",
+        method = RequestMethod.GET,
+        produces = "application/json;charset=UTF-8"
+    )
+    public Author getAuthor(@PathVariable(value = "id") Long id) throws Exception {
+        Optional<Author> optionalAuthor = authorRepository.findById(id);
+
+        optionalAuthor.orElseThrow(() -> new Exception("No Entity Found"));
+        Author author = optionalAuthor.get();
         return author;
     }
 
