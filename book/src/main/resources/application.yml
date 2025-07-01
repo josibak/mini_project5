@@ -10,7 +10,7 @@ logging:
 
 ---
 
-# 🧩 default 프로파일 설정 (로컬 개발용)
+# default 프로파일 설정 (로컬 개발용)
 spring:
   profiles: default
   datasource:
@@ -57,7 +57,7 @@ server:
 
 ---
 
-# 🐳 docker 프로파일 설정 (도커 컨테이너 실행용)
+# docker 프로파일 설정 (도커 컨테이너 실행용)
 spring:
   profiles: docker
   datasource:
@@ -68,6 +68,8 @@ spring:
   h2:
     console:
       enabled: true
+      settings:
+        web-allow-others: true  #테스트 시에만 사용
   jpa:
     hibernate:
       ddl-auto: create
