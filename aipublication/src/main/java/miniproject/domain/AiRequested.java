@@ -9,24 +9,25 @@ import miniproject.infra.AbstractEvent;
 //<<< DDD / Domain Event
 @Data
 @ToString
-public class PublicCompleted extends AbstractEvent {
+public class AiRequested extends AbstractEvent {
 
     private Long publicationId;
     private Long manuscriptId;
-    private Long authorId;
     private String summary;
     private String postUrl;
     private String title;
+    private Long authorId;
     private Date publicAt;
     private String content;
+    private String bookId;
+    private String status;
 
-    public PublicCompleted(Publication aggregate) {
+    public AiRequested(Publication aggregate) {
         super(aggregate);
     }
 
-    public PublicCompleted() {
+    public AiRequested() {
         super();
     }
 }
 //>>> DDD / Domain Event
-
