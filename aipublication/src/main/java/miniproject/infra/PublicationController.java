@@ -56,6 +56,15 @@ public class PublicationController {
         // publicRequest에서 저장 및 이벤트 발행까지 처리
         return publication;
     }
+
+    @GetMapping(
+    value = "/publications",
+    produces = "application/json;charset=UTF-8"
+    )
+    public Iterable<Publication> getPublications() {
+        return publicationRepository.findAll();
+}
+
 }
 //>>> Clean Arch / Inbound Adaptor
 

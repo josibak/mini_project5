@@ -1,4 +1,3 @@
-PublicationRequested.java
 package miniproject.domain;
 
 import java.util.*;

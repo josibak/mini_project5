@@ -24,9 +24,10 @@ public class PolicyHandler {
     // 표지자동등록요청됨 이벤트 수신 → AI 결과 반영
     @StreamListener(
         value = KafkaProcessor.INPUT,
-        condition = "headers['type']=='AiRequested'"
+        condition = "#headers['type'] == 'AiRequested'"
     )
     public void wheneverAiRequested(@Payload AiRequested event) {
+
         System.out.println("##### listener AiRequested : " + event);
         Publication.aiRequest(event);
     }

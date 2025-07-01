@@ -24,6 +24,17 @@ public class AiRequested extends AbstractEvent {
 
     public AiRequested(Publication aggregate) {
         super(aggregate);
+            this.publicationId = aggregate.getPublicationId();
+            this.manuscriptId = aggregate.getManuscriptId();
+            this.summary = aggregate.getSummary();
+            this.postUrl = aggregate.getPostUrl();
+            this.title = aggregate.getTitle();
+            this.authorId = aggregate.getAuthorId();
+            this.publicAt = aggregate.getPublicAt();
+            this.content = aggregate.getContent();
+            this.bookId = aggregate.getBookId();
+            this.status = aggregate.getStatus();
+        
     }
 
     public AiRequested() {
