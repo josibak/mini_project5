@@ -9,5 +9,8 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
     collectionResourceRel = "pointAccounts",
     path = "pointAccounts"
 )
-public interface PointAccountRepository
-    extends PagingAndSortingRepository<PointAccount, LongLong> {}
+public interface PointAccountRepository extends JpaRepository<PointAccount, Long> {
+    Optional<PointAccount> findByUserId(Long userId);
+}
+
+

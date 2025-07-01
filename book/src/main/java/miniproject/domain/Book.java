@@ -37,11 +37,8 @@ public class Book {
         return BookApplication.applicationContext.getBean(BookRepository.class);
     }
 
-    /**
-     * ✅ 인스턴스 메서드로 변경된 조회수 증가 로직
-     * - static 메서드는 Spring의 JPA 트랜잭션 관리 대상이 아님
-     * - 따라서 Entity 객체를 통해 직접 메서드 호출하고 save 해야 DB 반영됨
-     */
+  
+    //변경된 조회수 증가 로직
     public void increaseViewCount() {
         if (this.viewCount == null) this.viewCount = 0;
         this.viewCount++;
@@ -54,10 +51,9 @@ public class Book {
         }
     }
 
-    /**
-     * ✅ 그대로 유지: 출판 완료 이벤트 수신 시 Book 인스턴스를 생성하고 저장
-     * - 이벤트에 포함된 책 정보로 새로운 Book 엔티티 생성
-     */
+
+    //출판 완료 이벤트 수신 시 Book 인스턴스를 생성하고 저장
+    //이벤트에 포함된 책 정보로 새로운 Book 엔티티 생성
     public static void publishingCompleted(PublicCompleted event) {
         Book book = new Book();
         book.setTitle(event.getTitle());

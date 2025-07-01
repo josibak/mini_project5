@@ -40,5 +40,17 @@ services:
       - kafka
     restart: on-failure  # book 컨테이너가 kafka 준비 전에 죽더라도 자동으로 재시작해서 정상적으로 붙게 해줌
 
+  point:
+    build: ../point
+    container_name: point
+    ports:
+      - "8088:8088"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - kafka
+    restart: on-failure
+
+
 volumes:
   kafka-data:
