@@ -1,12 +1,11 @@
 package miniproject.domain;
 
-import java.time.LocalDate;
-import java.util.*;
+import java.time.LocalDateTime;
 import lombok.*;
-import miniproject.domain.*;
 import miniproject.infra.AbstractEvent;
 
 //<<< DDD / Domain Event
+// 출간 요청됨.
 @Data
 @ToString
 public class PublicationRequested extends AbstractEvent {
@@ -15,8 +14,8 @@ public class PublicationRequested extends AbstractEvent {
     private Long authorId;
     private String title;
     private String content;
-    private Date createdAt;
-    private Date updateAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updateAt;
 
     public PublicationRequested(Manuscript aggregate) {
         super(aggregate);
