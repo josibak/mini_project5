@@ -18,7 +18,10 @@ public class ManuscriptController {
     @Autowired
     ManuscriptRepository manuscriptRepository;
 
-    // 원고 생성
+    @Autowired
+    ApprovedAuthorRepository approvedAuthorRepository;  
+
+    // 원고 생성 (C)
     @PostMapping(value = "/manuscripts/createmanuscript", produces = "application/json;charset=UTF-8")
     public Manuscript createManuscript(
         HttpServletRequest request,
@@ -26,13 +29,28 @@ public class ManuscriptController {
         @RequestBody CreateManuscriptCommand createManuscriptCommand
     ) throws Exception {
         System.out.println("##### /manuscript/createManuscript  called #####");
+
+        // 1. 승인된 작가인지 확인
+        Long authorId = createManuscriptCommand.getAuthorId();
+        if (!approvedAuthorRepository.existsById(authorId)) {
+            throw new IllegalAccessException("승인되지 않은 작가입니다. authorId = " + authorId);
+        }
+
+        // 2. 원고 생성 및 저장
         Manuscript manuscript = new Manuscript();
         manuscript.createManuscript(createManuscriptCommand);
         manuscriptRepository.save(manuscript);
+
         return manuscript;
     }
 
-    // 원고 수정
+    // 전체 원고 조회 (R)
+    @GetMapping("/manuscripts")
+    public Iterable<Manuscript> getAllManuscripts() {
+        return manuscriptRepository.findAll();
+    }
+
+    // 원고 수정 (U)
     @PutMapping(value = "/manuscripts/{id}/updatemanuscript", produces = "application/json;charset=UTF-8")
     public Manuscript updateManuscript(
         @PathVariable(value = "id") Long id,
@@ -41,6 +59,7 @@ public class ManuscriptController {
         HttpServletResponse response
     ) throws Exception {
         System.out.println("##### /manuscript/updateManuscript  called #####");
+
         Optional<Manuscript> optionalManuscript = manuscriptRepository.findById(id);
         optionalManuscript.orElseThrow(() -> new Exception("No Entity Found"));
         Manuscript manuscript = optionalManuscript.get();
@@ -58,9 +77,7 @@ public class ManuscriptController {
         HttpServletRequest request,
         HttpServletResponse response
     ) throws Exception {
-        System.out.println(
-            "##### /manuscript/requestPublication  called #####"
-        );
+        System.out.println("##### /manuscript/requestPublication  called #####");
 
         // 기존 원고 찾기
         Manuscript manuscript = manuscriptRepository.findById(id)
@@ -78,9 +95,8 @@ public class ManuscriptController {
         HttpServletRequest request,
         HttpServletResponse response
     ) throws Exception {
-        System.out.println(
-            "##### /manuscript/saveFinalManuscript  called #####"
-        );
+        System.out.println("##### /manuscript/saveFinalManuscript  called #####");
+
         Optional<Manuscript> optionalManuscript = manuscriptRepository.findById(id);
 
         optionalManuscript.orElseThrow(() -> new Exception("No Entity Found"));
@@ -90,6 +106,11 @@ public class ManuscriptController {
 
         manuscriptRepository.save(manuscript);
         return manuscript;
+    }
+
+    @GetMapping("/test/approved-authors")
+    public Iterable<ApprovedAuthor> getAll() {
+        return approvedAuthorRepository.findAll();
     }
 }
 //>>> Clean Arch / Inbound Adaptor

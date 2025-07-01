@@ -60,12 +60,11 @@ public class Manuscript {
     }
 
     //<<< Clean Arch / Port Method
+    // 원고 생성 비즈니스 로직
     public void createManuscript(
         CreateManuscriptCommand createManuscriptCommand
     ) {
-        //implement business logic here:
-
-        
+        //implement business logic here:    
         this.authorId = createManuscriptCommand.getAuthorId();
         this.title = createManuscriptCommand.getTitle();
         this.content = createManuscriptCommand.getContent();
@@ -76,6 +75,7 @@ public class Manuscript {
 
     //>>> Clean Arch / Port Method
     //<<< Clean Arch / Port Method
+    // 원고 수정 비즈니스 로직
     public void updateManuscript(
         UpdateManuscriptCommand updateManuscriptCommand
     ) {
@@ -93,6 +93,7 @@ public class Manuscript {
 
     //>>> Clean Arch / Port Method
     //<<< Clean Arch / Port Method
+    // 원고 출간 요청 비즈니스 로직
     public void requestPublication(
         RequestPublicationCommand requestPublicationCommand
     ) {
@@ -100,7 +101,7 @@ public class Manuscript {
 
         // 이미 출간 요청이 되어 있는 경우 중복 방지
         if (this.publicationRequested) {
-            throw new IllegalStateException("이미 출간이 요청된 원고입니다.")
+            throw new IllegalStateException("이미 출간이 요청된 원고입니다.");
         }
 
         // 출간 요청 상태로 변경
@@ -114,6 +115,7 @@ public class Manuscript {
 
     //>>> Clean Arch / Port Method
     //<<< Clean Arch / Port Method
+    // 원고 최종 저장 비즈니스 로직
     public void saveFinalManuscript(
         SaveFinalManuscriptCommand saveFinalManuscriptCommand
     ) {
