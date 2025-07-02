@@ -63,6 +63,14 @@ public class Publication {
 
     // 3. 출간 작업 완료: status "completed" + 출간 작업 완료됨 이벤트 발행
     public void publicComplete(PublicCompleteCommand publicCompleteCommand) {
+        this.postUrl = publicCompleteCommand.getPostUrl();
+        this.title = publicCompleteCommand.getTitle();
+        this.authorId = publicCompleteCommand.getAuthorId();
+        this.publicAt = publicCompleteCommand.getPublicAt();
+        this.content = publicCompleteCommand.getContent();
+        this.bookId = publicCompleteCommand.getBookId();
+        this.status = publicCompleteCommand.getStatus();
+        this.summary = publicCompleteCommand.getSummary();
         this.status = "completed";
         this.publicAt = new Date();
         repository().save(this);
