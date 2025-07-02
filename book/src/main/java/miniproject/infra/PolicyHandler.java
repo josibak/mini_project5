@@ -37,7 +37,7 @@ public class PolicyHandler {
 
         try {
             JSONObject json = new JSONObject(payload);
-            String type = json.optString("type");
+            String type = json.optString("eventType");
 
             if ("PublicCompleted".equals(type)) {
                 // 출판 완료 이벤트 수신 시 새로운 도서 등록 처리
@@ -54,9 +54,8 @@ public class PolicyHandler {
                 bookRepository.save(book);
             }
 
-            else if ("BookOpened".equals(type)) {
-                // 도서 열람 이벤트 수신 시 조회수 증가
-                System.out.println("\n\n##### listener IncreaseViewCount : " + json + "\n\n");
+            else if ("BookOpened".equals(type) || "PointDeducted".equals(type)) {
+                System.out.println("\n\n##### listener IncreaseViewCount (by PointDeducted): " + json + "\n\n");
 
                 Long bookId = json.getLong("bookId");
 
@@ -64,7 +63,7 @@ public class PolicyHandler {
                     System.out.println(">> Book 찾음: " + book.getTitle());
                     book.increaseViewCount(); // 내부 로직에서 viewCount += 1
                     bookRepository.save(book);
-                    System.out.println(">> 조회스 증가 저장 완료");
+                    System.out.println(">> 조회수 증가 저장 완료");
                 });
             }
 

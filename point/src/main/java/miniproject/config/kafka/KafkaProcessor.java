@@ -15,3 +15,4 @@ public interface KafkaProcessor {
     @Output(OUTPUT)
     MessageChannel outboundTopic();
 }
+

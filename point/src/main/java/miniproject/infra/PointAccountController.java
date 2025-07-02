@@ -1,53 +1,60 @@
 package miniproject.infra;
 
-import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
-import miniproject.domain.*;
+import miniproject.domain.PointAccount;
+import miniproject.domain.PointAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/pointAccounts")
 public class PointAccountController {
 
     @Autowired
-    private PointAccountService pointAccountService;
+    private PointAccountRepository pointAccountRepository;
 
-    @PostMapping("/{userId}")
-    public ResponseEntity<PointAccount> createAccount(@PathVariable String userId) {
-        return ResponseEntity.ok(pointAccountService.createAccount(userId));
-    }
-
+    // 포인트 계좌 조회 (운영용)
     @GetMapping("/{userId}")
-    public ResponseEntity<PointAccount> getAccount(@PathVariable String userId) {
-        return ResponseEntity.ok(pointAccountService.getAccount(userId));
+    public ResponseEntity<?> getPointAccount(@PathVariable Long userId) {
+        Optional<PointAccount> accountOpt = pointAccountRepository.findByUserId(userId);
+        if (accountOpt.isPresent()) {
+            return ResponseEntity.ok(accountOpt.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
+    // 포인트 수동 지급 (운영용)
     @PostMapping("/{userId}/add")
-    public ResponseEntity<PointAccount> addPoint(
-            @PathVariable String userId,
-            @RequestParam int amount) {
-        return ResponseEntity.ok(pointAccountService.addPoint(userId, amount));
+    public ResponseEntity<?> addPoint(@PathVariable Long userId, @RequestParam int amount) {
+        Optional<PointAccount> accountOpt = pointAccountRepository.findByUserId(userId);
+        if (accountOpt.isPresent()) {
+            PointAccount account = accountOpt.get();
+            account.setBalance(account.getBalance() + amount);
+            pointAccountRepository.save(account);
+            return ResponseEntity.ok(account);
+        } else {
+            return ResponseEntity.badRequest().body("계좌 없음");
+        }
     }
 
+    // 포인트 수동 차감 (운영용)
     @PostMapping("/{userId}/deduct")
-    public ResponseEntity<String> deductPoint(
-            @PathVariable String userId,
-            @RequestParam int amount) {
-        boolean success = pointAccountService.deductPoint(userId, amount);
-        return success ? ResponseEntity.ok("차감 성공")
-                       : ResponseEntity.badRequest().body("포인트 부족");
-    }
-
-    @GetMapping("/{userId}/check")
-    public ResponseEntity<String> checkEnough(
-            @PathVariable String userId,
-            @RequestParam int amount) {
-        boolean result = pointAccountService.hasEnoughPoint(userId, amount);
-        return ResponseEntity.ok(result ? "가능" : "불가능");
+    public ResponseEntity<?> deductPoint(@PathVariable Long userId, @RequestParam int amount) {
+        Optional<PointAccount> accountOpt = pointAccountRepository.findByUserId(userId);
+        if (accountOpt.isPresent()) {
+            PointAccount account = accountOpt.get();
+            if (account.getBalance() >= amount) {
+                account.setBalance(account.getBalance() - amount);
+                pointAccountRepository.save(account);
+                return ResponseEntity.ok("차감 성공");
+            } else {
+                return ResponseEntity.badRequest().body("포인트 부족");
+            }
+        } else {
+            return ResponseEntity.badRequest().body("계좌 없음");
+        }
     }
 }

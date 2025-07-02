@@ -1,9 +1,10 @@
 server:
-  port: 8080
+  port: 8088
 
 spring:
   application:
     name: point
+
 ---
 
 spring:
@@ -30,14 +31,10 @@ spring:
       bindings:
         event-in:
           group: point
-#<<< EDA / Topic Name
           destination: miniproject
-#>>> EDA / Topic Name
           contentType: application/json
         event-out:
-#<<< EDA / Topic Name
           destination: miniproject
-#>>> EDA / Topic Name
           contentType: application/json
 
 logging:
@@ -45,15 +42,24 @@ logging:
     org.hibernate.type: trace
     org.springframework.cloud: debug
 
-
-server:
-  port: 8088
-
 ---
 
 spring:
   profiles: docker
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
   jpa:
+    hibernate:
+      ddl-auto: update
     properties:
       hibernate:
         show_sql: true
@@ -80,5 +86,3 @@ spring:
         event-out:
           destination: miniproject
           contentType: application/json
-
-
