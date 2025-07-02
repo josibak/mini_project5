@@ -7,8 +7,6 @@ import javax.transaction.Transactional;
 import miniproject.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 //<<< Clean Arch / Inbound Adaptor
 
@@ -20,22 +18,6 @@ public class MemberController {
     @Autowired
     MemberRepository memberRepository;
 
-    @RequestMapping(
-        value = "/members/openbookpoint",
-        method = RequestMethod.POST,
-        produces = "application/json;charset=UTF-8"
-    )
-    public Member openBookPoint(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        @RequestBody OpenBookPointCommand openBookPointCommand
-    ) throws Exception {
-        System.out.println("##### /member/openBookPoint  called #####");
-        Member member = new Member();
-        member.openBookPoint(openBookPointCommand);
-        memberRepository.save(member);
-        return member;
-    }
 
     @RequestMapping(
         value = "/members/subscribtionrequest",
@@ -45,14 +27,21 @@ public class MemberController {
     public Member subscribtionRequest(
         HttpServletRequest request,
         HttpServletResponse response,
-        @RequestBody SubscribtionRequestCommand subscribtionRequestCommand
+        @RequestBody SubscribtionRequestCommand command
     ) throws Exception {
         System.out.println("##### /member/subscribtionRequest  called #####");
-        Member member = new Member();
-        member.subscribtionRequest(subscribtionRequestCommand);
+
+        Optional<Member> optionalMember = memberRepository.findById(command.getUserId());
+        if (optionalMember.isEmpty()) {
+        throw new Exception("Member not found for userId: " + command.getUserId());
+        }
+        Member member = optionalMember.get();
+        member.subscribtionRequest(command);
+
         memberRepository.save(member);
         return member;
     }
+
 
     @RequestMapping(
         value = "/members/registermember",
@@ -71,27 +60,6 @@ public class MemberController {
         return member;
     }
 
-    @RequestMapping(
-        value = "/members/{id}/authkt",
-        method = RequestMethod.PUT,
-        produces = "application/json;charset=UTF-8"
-    )
-    public Member authKt(
-        @PathVariable(value = "id") Long id,
-        @RequestBody AuthKtCommand authKtCommand,
-        HttpServletRequest request,
-        HttpServletResponse response
-    ) throws Exception {
-        System.out.println("##### /member/authKt  called #####");
-        Optional<Member> optionalMember = memberRepository.findById(id);
-
-        optionalMember.orElseThrow(() -> new Exception("No Entity Found"));
-        Member member = optionalMember.get();
-        member.authKt(authKtCommand);
-
-        memberRepository.save(member);
-        return member;
-    }
 
     @RequestMapping(
         value = "/members/bookopen",
@@ -101,11 +69,19 @@ public class MemberController {
     public Member bookOpen(
         HttpServletRequest request,
         HttpServletResponse response,
-        @RequestBody BookOpenCommand bookOpenCommand
+        @RequestBody BookOpenCommand command
     ) throws Exception {
-        System.out.println("##### /member/bookOpen  called #####");
-        Member member = new Member();
-        member.bookOpen(bookOpenCommand);
+        System.out.println("##### /member/bookOpen called #####");
+
+        Optional<Member> optionalMember = memberRepository.findById(command.getUserId());
+
+        if (optionalMember.isEmpty()) {
+            throw new Exception("Member not found for userId: " + command.getUserId());
+        }
+
+        Member member = optionalMember.get();
+        member.bookOpen(command);
+
         memberRepository.save(member);
         return member;
     }
