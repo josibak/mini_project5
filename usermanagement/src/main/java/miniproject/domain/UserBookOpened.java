@@ -10,19 +10,17 @@ import miniproject.infra.AbstractEvent;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberRegistered extends AbstractEvent {
+public class UserBookOpened extends AbstractEvent {
 
     private Long userId;
-    private String name;
-    private String email;
-    private Boolean isKtUser;
+    private Long bookId;
+    private Boolean isSubscriber;
 
-    public MemberRegistered(Member member) {
+    public UserBookOpened(Member member, Long bookId) {
         super(member);
         this.userId = member.getUserId();
-        this.name = member.getName();
-        this.email = member.getEmail();
-        this.isKtUser = member.getIsKtUser();
+        this.bookId = bookId;
+        this.isSubscriber = member.getSubscribeStatus();
     }
 }
 //>>> DDD / Domain Event

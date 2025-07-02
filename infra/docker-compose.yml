@@ -29,57 +29,57 @@ services:
       timeout: 10s
       retries: 5
 
-  gateway:
-    build: ../gateway
-    container_name: gateway
-    ports:
-      - "8080:8080"
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-    depends_on:
-      - kafka
-      - authormanagement
-      - manuscript
-      - aipublication
-      - book
-      # - usermanagement
-      - subcription
-      - point
-      # - frontend
-    restart: on-failure
+  # gateway:
+  #   build: ../gateway
+  #   container_name: gateway
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     - SPRING_PROFILES_ACTIVE=docker
+  #   depends_on:
+  #     - kafka
+  #     - authormanagement
+  #     - manuscript
+  #     - aipublication
+  #     - book
+  #     # - usermanagement
+  #     - subcription
+  #     - point
+  #     # - frontend
+  #   restart: on-failure
 
-  authormanagement:
-    build: ../authormanagement
-    container_name: authormanagement
-    ports:
-      - "8082:8082"
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-    depends_on:
-      - kafka
-    restart: on-failure
+  # authormanagement:
+  #   build: ../authormanagement
+  #   container_name: authormanagement
+  #   ports:
+  #     - "8082:8082"
+  #   environment:
+  #     - SPRING_PROFILES_ACTIVE=docker
+  #   depends_on:
+  #     - kafka
+  #   restart: on-failure
 
-  manuscript:
-    build: ../manuscript
-    container_name: manuscript
-    ports:
-      - "8083:8083"
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-    depends_on:
-      - kafka
-    restart: on-failure
+  # manuscript:
+  #   build: ../manuscript
+  #   container_name: manuscript
+  #   ports:
+  #     - "8083:8083"
+  #   environment:
+  #     - SPRING_PROFILES_ACTIVE=docker
+  #   depends_on:
+  #     - kafka
+  #   restart: on-failure
 
-  aipublication:
-    build: ../aipublication        
-    container_name: aipublication  # 고유 컨테이너 이름
-    ports:
-      - "8084:8084"                
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-    depends_on:
-      - kafka
-    restart: on-failure
+  # aipublication:
+  #   build: ../aipublication        
+  #   container_name: aipublication  # 고유 컨테이너 이름
+  #   ports:
+  #     - "8084:8084"                
+  #   environment:
+  #     - SPRING_PROFILES_ACTIVE=docker
+  #   depends_on:
+  #     - kafka
+  #   restart: on-failure
 
   book:
     build: ../book   # book 디렉토리에 Dockerfile 있어야 함
@@ -92,28 +92,28 @@ services:
       - kafka
     restart: on-failure  # book 컨테이너가 kafka 준비 전에 죽더라도 자동으로 재시작해서 정상적으로 붙게 해줌
 
-  # usermanagement:
-  #   build: ../usermanagement
-  #   container_name: usermanagement
-  #   ports:
-  #     - "8086:8086"
-  #   environment:
-  #     - SPRING_PROFILES_ACTIVE=docker
-  #   depends_on:
-  #     - kafka
-  #   restart: on-failure
-
-
-  subcription:
-    build: ../subcription   
-    container_name: subcription
+  usermanagement:
+    build: ../usermanagement
+    container_name: usermanagement
     ports:
-      - "8087:8087"
+      - "8086:8086"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
       - kafka
     restart: on-failure
+
+
+  # subcription:
+  #   build: ../subcription   
+  #   container_name: subcription
+  #   ports:
+  #     - "8087:8087"
+  #   environment:
+  #     - SPRING_PROFILES_ACTIVE=docker
+  #   depends_on:
+  #     - kafka
+  #   restart: on-failure
 
   point:
     build: ../point

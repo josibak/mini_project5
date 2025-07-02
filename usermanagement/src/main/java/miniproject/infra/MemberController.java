@@ -1,113 +1,69 @@
 package miniproject.infra;
 
-import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
-import miniproject.domain.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import miniproject.domain.Member;
+import miniproject.domain.MemberRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-//<<< Clean Arch / Inbound Adaptor
 
 @RestController
-// @RequestMapping(value="/members")
-@Transactional
+@RequiredArgsConstructor
+@RequestMapping("/members")
 public class MemberController {
 
-    @Autowired
-    MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
-    @RequestMapping(
-        value = "/members/openbookpoint",
-        method = RequestMethod.POST,
-        produces = "application/json;charset=UTF-8"
-    )
-    public Member openBookPoint(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        @RequestBody OpenBookPointCommand openBookPointCommand
-    ) throws Exception {
-        System.out.println("##### /member/openBookPoint  called #####");
-        Member member = new Member();
-        member.openBookPoint(openBookPointCommand);
-        memberRepository.save(member);
-        return member;
+    // 1. 회원가입
+    @PostMapping
+    public Member register(@RequestBody Member member) {
+        return memberRepository.save(member); // onPostPersist에서 이벤트 자동 발행
     }
 
-    @RequestMapping(
-        value = "/members/subscribtionrequest",
-        method = RequestMethod.POST,
-        produces = "application/json;charset=UTF-8"
-    )
-    public Member subscribtionRequest(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        @RequestBody SubscribtionRequestCommand subscribtionRequestCommand
-    ) throws Exception {
-        System.out.println("##### /member/subscribtionRequest  called #####");
-        Member member = new Member();
-        member.subscribtionRequest(subscribtionRequestCommand);
-        memberRepository.save(member);
-        return member;
+    // 2. 구독 신청
+    @PostMapping("/{id}/subscribe")
+    public String subscribe(@PathVariable Long id) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
+        member.requestSubscription();
+        return "구독 신청 완료";
     }
 
-    @RequestMapping(
-        value = "/members/registermember",
-        method = RequestMethod.POST,
-        produces = "application/json;charset=UTF-8"
-    )
-    public Member registerMember(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        @RequestBody RegisterMemberCommand registerMemberCommand
-    ) throws Exception {
-        System.out.println("##### /member/registerMember  called #####");
-        Member member = new Member();
-        member.registerMember(registerMemberCommand);
+    // 3. 책 열람 (Kafka 이벤트 발행)
+    @PostMapping("/{id}/openBook")
+    public String openBook(@PathVariable Long id, @RequestParam Long bookId) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
+        member.openBook(bookId);
         memberRepository.save(member);
-        return member;
+        return "도서 열람 처리 완료";
     }
 
-    @RequestMapping(
-        value = "/members/{id}/authkt",
-        method = RequestMethod.PUT,
-        produces = "application/json;charset=UTF-8"
-    )
-    public Member authKt(
-        @PathVariable(value = "id") Long id,
-        @RequestBody AuthKtCommand authKtCommand,
-        HttpServletRequest request,
-        HttpServletResponse response
-    ) throws Exception {
-        System.out.println("##### /member/authKt  called #####");
-        Optional<Member> optionalMember = memberRepository.findById(id);
+    // 4. 책 열람 권한 부여 API (PointService가 호출)
+    @PutMapping("/{userId}/grantBook/{bookId}")
+    public ResponseEntity<?> grantBookAccess(@PathVariable Long userId, @PathVariable Long bookId) {
+        Member member = memberRepository.findById(userId)
+                .orElse(null);
 
-        optionalMember.orElseThrow(() -> new Exception("No Entity Found"));
-        Member member = optionalMember.get();
-        member.authKt(authKtCommand);
+        if (member == null) {
+            return ResponseEntity.notFound().build();
+        }
 
-        memberRepository.save(member);
-        return member;
+        member.grantBookAccess(bookId);
+        memberRepository.save(member); // 권한 저장
+
+        return ResponseEntity.ok().body("열람 권한 부여 완료");
     }
+    @GetMapping("/{userId}/canRead")
 
-    @RequestMapping(
-        value = "/members/bookopen",
-        method = RequestMethod.POST,
-        produces = "application/json;charset=UTF-8"
-    )
-    public Member bookOpen(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        @RequestBody BookOpenCommand bookOpenCommand
-    ) throws Exception {
-        System.out.println("##### /member/bookOpen  called #####");
-        Member member = new Member();
-        member.bookOpen(bookOpenCommand);
-        memberRepository.save(member);
-        return member;
+    public ResponseEntity<Boolean> canReadBook(@PathVariable Long userId, @RequestParam Long bookId) {
+        Member member = memberRepository.findById(userId)
+                .orElse(null);
+
+        if (member == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        boolean result = member.canReadBook(bookId);
+        return ResponseEntity.ok(result);
     }
 }
-//>>> Clean Arch / Inbound Adaptor

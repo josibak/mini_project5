@@ -12,6 +12,7 @@ import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
+
 //<<< Clean Arch / Inbound Adaptor
 @Service
 @Transactional
@@ -22,5 +23,20 @@ public class PolicyHandler {
 
     @StreamListener(KafkaProcessor.INPUT)
     public void whatever(@Payload String eventString) {}
+
+    @StreamListener(KafkaProcessor.INPUT)
+    public void wheneverSubscriberRegister_UpdateStatus(@Payload SubscriberRegister event) {
+        memberRepository.findById(event.getUserId()).ifPresent(member -> {
+            member.setSubscribeStatus(true);
+            memberRepository.save(member);
+        });
+    }
+
+    @StreamListener(KafkaProcessor.INPUT)
+    public void wheneverSubscriptionFinish_UpdateStatus(@Payload SubscriptionFinished event) {
+        memberRepository.findById(event.getUserId()).ifPresent(member -> {
+            member.setSubscribeStatus(false);
+            memberRepository.save(member);
+        });
+    }
 }
-//>>> Clean Arch / Inbound Adaptor

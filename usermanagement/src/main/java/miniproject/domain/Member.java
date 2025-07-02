@@ -1,131 +1,70 @@
 package miniproject.domain;
 
-import miniproject.domain.SubscriberRegistered;
-import miniproject.domain.SubscribeFinished;
-import miniproject.UsermanagementApplication;
-import javax.persistence.*;
-import java.util.List;
 import lombok.Data;
-import java.util.Date;
-import java.time.LocalDate;
-import java.util.Map;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Collections;
+import javax.persistence.*;
+import miniproject.UsermanagementApplication;
 
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name="Member_table")
+@Table(name = "member_table")
 @Data
-
-//<<< DDD / Aggregate Root
-public class Member  {
+public class Member {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    
-    
-    
-private Long userId;    
-    
-    
-private Long bookId;    
-    
-    
-private String name;    
-    
-    
-private String email;    
-    
-    
-private Boolean subscribeStatus;    
-    
-    
-private Boolean isKtUser;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userId;
 
+    private String name;
+    private String email;
+    private Boolean subscribeStatus = false; // 구독 여부
+    private Boolean isKtUser = false;        // KT 유저 여부
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+        name = "member_purchased_books",
+        joinColumns = @JoinColumn(name = "user_id")
+    )
+    @Column(name = "book_id")
+    private List<Long> purchasedBookIds = new ArrayList<>();
+
+    // === Repository Helper ===
+    public static MemberRepository repository() {
+        return UsermanagementApplication.applicationContext.getBean(MemberRepository.class);
+    }
+
+    // === 이벤트 발행: 회원가입 완료 ===
     @PostPersist
-    public void onPostPersist(){
-
-
-        SubscriberRegistered subscriberRegistered = new SubscriberRegistered(this);
-        subscriberRegistered.publishAfterCommit();
-
-
-
-        SubscribeFinished subscribeFinished = new SubscribeFinished(this);
-        subscribeFinished.publishAfterCommit();
-
-    
+    public void onPostPersist() {
+        MemberRegistered event = new MemberRegistered(this);
+        event.publishAfterCommit();
     }
 
-    public static MemberRepository repository(){
-        MemberRepository memberRepository = UsermanagementApplication.applicationContext.getBean(MemberRepository.class);
-        return memberRepository;
+    // === 구독 신청 ===
+    public void requestSubscription() {
+        SubscriptionRequested event = new SubscriptionRequested(this);
+        event.publishAfterCommit();
     }
 
-
-
-//<<< Clean Arch / Port Method
-    public void openBookPoint(OpenBookPointCommand openBookPointCommand){
-        
-        //implement business logic here:
-        
-
-
-        PointBookOpened pointBookOpened = new PointBookOpened(this);
-        pointBookOpened.publishAfterCommit();
+    // === 책 열람 ===
+    public void openBook(Long bookId) {
+        UserBookOpened event = new UserBookOpened(this, bookId);
+        event.publishAfterCommit();
     }
-//>>> Clean Arch / Port Method
-//<<< Clean Arch / Port Method
-    public void subscribtionRequest(SubscribtionRequestCommand subscribtionRequestCommand){
-        
-        //implement business logic here:
-        
 
-
-        SubscribtionRequested subscribtionRequested = new SubscribtionRequested(this);
-        subscribtionRequested.publishAfterCommit();
+    // === 도서 열람 권한 확인 ===
+    public boolean canReadBook(Long bookId) {
+        return subscribeStatus || (purchasedBookIds != null && purchasedBookIds.contains(bookId));
     }
-//>>> Clean Arch / Port Method
-//<<< Clean Arch / Port Method
-    public void registerMember(RegisterMemberCommand registerMemberCommand){
-        
-        //implement business logic here:
-        
 
-        miniproject.external.MemberQuery memberQuery = new miniproject.external.MemberQuery();
-        // memberQuery.set??()        
-          = MemberApplication.applicationContext
-            .getBean(miniproject.external.Service.class)
-            .member(memberQuery);
-
-        MemberRegistered memberRegistered = new MemberRegistered(this);
-        memberRegistered.publishAfterCommit();
+    // === 열람 권한 부여 (포인트 차감 완료 시 호출) ===
+    public void grantBookAccess(Long bookId) {
+        if (purchasedBookIds == null) {
+            purchasedBookIds = new ArrayList<>();
+        }
+        if (!purchasedBookIds.contains(bookId)) {
+            purchasedBookIds.add(bookId);
+        }
     }
-//>>> Clean Arch / Port Method
-//<<< Clean Arch / Port Method
-    public void authKt(AuthKtCommand authKtCommand){
-        
-        //implement business logic here:
-        
-
-
-        KtAuthenticated ktAuthenticated = new KtAuthenticated(this);
-        ktAuthenticated.publishAfterCommit();
-    }
-//>>> Clean Arch / Port Method
-//<<< Clean Arch / Port Method
-    public void bookOpen(BookOpenCommand bookOpenCommand){
-        
-        //implement business logic here:
-        
-
-
-        BookOpened bookOpened = new BookOpened(this);
-        bookOpened.publishAfterCommit();
-    }
-//>>> Clean Arch / Port Method
-
-
-
 }
-//>>> DDD / Aggregate Root
