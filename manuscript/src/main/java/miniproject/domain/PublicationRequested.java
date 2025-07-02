@@ -14,11 +14,13 @@ public class PublicationRequested extends AbstractEvent {
     private Long authorId;
     private String title;
     private String content;
-    private LocalDateTime createdAt;
-    private LocalDateTime updateAt;
 
     public PublicationRequested(Manuscript aggregate) {
         super(aggregate);
+        this.manuscriptId = aggregate.getManuscriptId();
+        this.authorId = aggregate.getAuthorId();
+        this.title = aggregate.getTitle();
+        this.content = aggregate.getContent();
     }
 
     public PublicationRequested() {
