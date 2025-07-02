@@ -34,8 +34,6 @@ public class UserpageViewHandler {
             userpage.setEmail(memberRegistered.getEmail());
             userpage.setIsKtUser(NO);
             userpage.setSubscribeStatus(NOTSUBSCRIBED);
-            userpage.setName(memberRegistered.getName());
-            userpage.setEmail(memberRegistered.getEmail());
             // view 레파지 토리에 save
             userpageRepository.save(userpage);
         } catch (Exception e) {

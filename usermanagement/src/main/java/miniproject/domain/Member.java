@@ -37,8 +37,8 @@ private String name;
 private String email;    
     
     
-private Boolean subscribeStatus;    
-    
+// private Boolean subscribeStatus;    
+private Boolean isSubscriber;
     
 private Boolean isKtUser;
 
@@ -87,10 +87,11 @@ private Boolean isKtUser;
     }
 //>>> Clean Arch / Port Method
 //<<< Clean Arch / Port Method
-    public void registerMember(RegisterMemberCommand registerMemberCommand){
-        
-        //implement business logic here:
-        
+    public void registerMember(RegisterMemberCommand command){
+        this.name = command.getName();
+        this.email = command.getEmail();
+        this.isSubscriber = false;
+        this.isKtUser = command.getIsKtUser();
 
         MemberRegistered memberRegistered = new MemberRegistered(this);
         memberRegistered.publishAfterCommit();

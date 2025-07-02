@@ -12,30 +12,22 @@ import miniproject.infra.AbstractEvent;
 public class MemberRegistered extends AbstractEvent {
 
     private Long userId;
-    private String name;
-    private String email;
+    private boolean isKtUser;
 
     public MemberRegistered(Member aggregate) {
         super(aggregate);
         if (aggregate != null) {
             this.userId = aggregate.getUserId();
-            this.name = aggregate.getName();
-            this.email = aggregate.getEmail();
+            this.isKtUser = aggregate.getIsKtUser() != null && aggregate.getIsKtUser();
         }
     }
 
-    public MemberRegistered() {
-        super();
+    @Override
+    public String getEventType() {
+        return "UserRegistered";
     }
 
     public Long getUserId() {
         return userId;
     }
-    public String getName() {
-        return name;
-    }
-    public String getEmail() {
-        return email;
-    }
 }
-//>>> DDD / Domain Event

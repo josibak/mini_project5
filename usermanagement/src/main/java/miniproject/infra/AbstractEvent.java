@@ -1,9 +1,12 @@
 package miniproject.infra;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import miniproject.UsermanagementApplication;
 import miniproject.config.kafka.KafkaProcessor;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHeaders;
@@ -15,6 +18,7 @@ import org.springframework.util.MimeTypeUtils;
 //<<< Clean Arch / Outbound Adaptor
 public class AbstractEvent {
 
+    @JsonProperty("eventType")
     String eventType;
     Long timestamp;
 
@@ -93,4 +97,3 @@ public class AbstractEvent {
         return json;
     }
 }
-//>>> Clean Arch / Outbound Adaptor

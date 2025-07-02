@@ -9,4 +9,5 @@ public class RegisterMemberCommand {
 
     private String name;
     private String email;
+    private Boolean isKtUser;
 }
