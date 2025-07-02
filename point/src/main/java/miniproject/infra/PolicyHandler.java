@@ -41,7 +41,7 @@ public class PolicyHandler {
     public void wheneverBookOpened_HandleDeduction(@Payload String eventString) {
         try {
             JSONObject eventJson = new JSONObject(eventString);
-            if (!eventJson.has("eventType") || !eventJson.getString("eventType").equals("BookOpened")) return;
+            if (!eventJson.has("eventType") || !eventJson.getString("eventType").equals("userBookOpened")) return;
 
             Long userId = eventJson.getLong("userId");
             Long bookId = eventJson.getLong("bookId");
@@ -51,20 +51,6 @@ public class PolicyHandler {
 
         } catch (Exception e) {
             System.out.println("Error handling BookOpened: " + e.getMessage());
-        }
-    }
-
-    @StreamListener(KafkaProcessor.INPUT)
-    public void wheneverKtVerified_AddBonus(@Payload String eventString) {
-        try {
-            JSONObject eventJson = new JSONObject(eventString);
-            if (!eventJson.has("eventType") || !eventJson.getString("eventType").equals("KtVerified")) return;
-
-            Long userId = eventJson.getLong("userId");
-            pointService.addKtBonus(userId);
-
-        } catch (Exception e) {
-            System.out.println("Error handling KtVerified: " + e.getMessage());
         }
     }
 }
