@@ -2,6 +2,9 @@ package miniproject.domain;
 
 import java.time.LocalDate;
 import java.util.*;
+
+import javax.validation.OverridesAttribute;
+
 import lombok.*;
 import miniproject.domain.*;
 import miniproject.infra.AbstractEvent;
@@ -9,17 +12,19 @@ import miniproject.infra.AbstractEvent;
 //<<< DDD / Domain Event
 @Data
 @ToString
+@NoArgsConstructor
 public class SubscribtionRequested extends AbstractEvent {
 
     private Long userId;
-    private Boolean subscribe;
 
     public SubscribtionRequested(Member aggregate) {
         super(aggregate);
+        this.userId = aggregate.getUserId();
     }
 
-    public SubscribtionRequested() {
-        super();
+    @Override
+    public String getEventType() {
+        return "SubscribtionRequested";
     }
 }
 //>>> DDD / Domain Event

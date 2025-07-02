@@ -70,23 +70,16 @@ private Boolean isKtUser;
         //implement business logic here:
         
 
-
         PointBookOpened pointBookOpened = new PointBookOpened(this);
         pointBookOpened.publishAfterCommit();
     }
-//>>> Clean Arch / Port Method
-//<<< Clean Arch / Port Method
-    public void subscribtionRequest(SubscribtionRequestCommand subscribtionRequestCommand){
-        
-        //implement business logic here:
-        
 
-
-        SubscribtionRequested subscribtionRequested = new SubscribtionRequested(this);
-        subscribtionRequested.publishAfterCommit();
+    public void subscribtionRequest(SubscribtionRequestCommand command){
+        // SubscribtionRequested 이벤트 생성
+        SubscribtionRequested event = new SubscribtionRequested(this);
+        event.publishAfterCommit();
     }
-//>>> Clean Arch / Port Method
-//<<< Clean Arch / Port Method
+
     public void registerMember(RegisterMemberCommand command){
         this.name = command.getName();
         this.email = command.getEmail();
@@ -96,8 +89,7 @@ private Boolean isKtUser;
         MemberRegistered memberRegistered = new MemberRegistered(this);
         memberRegistered.publishAfterCommit();
     }
-//>>> Clean Arch / Port Method
-//<<< Clean Arch / Port Method
+
     public void authKt(AuthKtCommand authKtCommand){
         
         //implement business logic here:
