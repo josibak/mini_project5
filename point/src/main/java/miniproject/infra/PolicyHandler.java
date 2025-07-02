@@ -21,15 +21,14 @@ public class PolicyHandler {
     public void whatever(@Payload String eventString) {
         // Just a fallback catch-all method
     }
-
     @StreamListener(KafkaProcessor.INPUT)
-    public void wheneverUserRegistered_InitializeAccount(@Payload String eventString) {
+    public void wheneverMemberRegistered_InitializeAccount(@Payload String eventString) {
         try {
             JSONObject eventJson = new JSONObject(eventString);
-            if (!eventJson.has("eventType") || !eventJson.getString("eventType").equals("UserRegistered")) return;
+            if (!eventJson.has("eventType") || !eventJson.getString("eventType").equals("MemberRegistered")) return;
 
             Long userId = eventJson.getLong("userId");
-            boolean isKtMember = eventJson.optBoolean("isKtMember", false);
+            boolean isKtMember = eventJson.optBoolean("isKtUser", false);
             pointService.initializeAccount(userId, isKtMember);
 
         } catch (Exception e) {
