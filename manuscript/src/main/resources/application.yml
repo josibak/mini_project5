@@ -78,7 +78,7 @@ spring:
           destination: AuthorRegistrationApproved
           contentType: application/json
         event-out:
-          destination: miniproject
+          destination: PublicationRequested
           contentType: application/json
 
 
