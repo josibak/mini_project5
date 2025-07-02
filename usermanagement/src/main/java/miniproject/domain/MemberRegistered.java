@@ -12,12 +12,16 @@ import miniproject.infra.AbstractEvent;
 public class MemberRegistered extends AbstractEvent {
 
     private Long userId;
+    private String name;
+    private String email;
     private boolean isKtUser;
 
     public MemberRegistered(Member aggregate) {
         super(aggregate);
         if (aggregate != null) {
             this.userId = aggregate.getUserId();
+            this.name = aggregate.getName();
+            this.email = aggregate.getEmail();
             this.isKtUser = aggregate.getIsKtUser() != null && aggregate.getIsKtUser();
         }
     }
@@ -30,4 +34,10 @@ public class MemberRegistered extends AbstractEvent {
     public Long getUserId() {
         return userId;
     }
+
+    public String getName() {
+        throw new UnsupportedOperationException("Unimplemented method 'getName'");
+    }
+
+
 }

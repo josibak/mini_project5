@@ -1,7 +1,5 @@
 package miniproject.domain;
 
-import miniproject.domain.SubscriberRegistered;
-import miniproject.domain.SubscribeFinished;
 import miniproject.UsermanagementApplication;
 import javax.persistence.*;
 import java.util.List;
@@ -42,37 +40,11 @@ private Boolean isSubscriber;
     
 private Boolean isKtUser;
 
-    @PostPersist
-    public void onPostPersist(){
-
-
-        SubscriberRegistered subscriberRegistered = new SubscriberRegistered(this);
-        subscriberRegistered.publishAfterCommit();
-
-
-
-        SubscribeFinished subscribeFinished = new SubscribeFinished(this);
-        subscribeFinished.publishAfterCommit();
-
-    
-    }
-
     public static MemberRepository repository(){
         MemberRepository memberRepository = UsermanagementApplication.applicationContext.getBean(MemberRepository.class);
         return memberRepository;
     }
 
-
-
-//<<< Clean Arch / Port Method
-    public void openBookPoint(OpenBookPointCommand openBookPointCommand){
-        
-        //implement business logic here:
-        
-
-        PointBookOpened pointBookOpened = new PointBookOpened(this);
-        pointBookOpened.publishAfterCommit();
-    }
 
     public void subscribtionRequest(SubscribtionRequestCommand command){
         // SubscribtionRequested 이벤트 생성
@@ -90,17 +62,7 @@ private Boolean isKtUser;
         memberRegistered.publishAfterCommit();
     }
 
-    public void authKt(AuthKtCommand authKtCommand){
-        
-        //implement business logic here:
-        
 
-
-        KtAuthenticated ktAuthenticated = new KtAuthenticated(this);
-        ktAuthenticated.publishAfterCommit();
-    }
-//>>> Clean Arch / Port Method
-//<<< Clean Arch / Port Method
     public void bookOpen(BookOpenCommand command){
         BookOpened bookOpened = new BookOpened(this);
         bookOpened.setBookId(command.getBookId());
@@ -108,8 +70,6 @@ private Boolean isKtUser;
 
         bookOpened.publishAfterCommit();
     }
-//>>> Clean Arch / Port Method
-
 
 
     public Long getUserId() {
