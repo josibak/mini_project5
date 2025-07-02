@@ -1,14 +1,9 @@
 package miniproject.domain;
 
-import java.time.LocalDate;
-import java.util.*;
 import lombok.Data;
 
+// 출간 요청
 @Data
 public class RequestPublicationCommand {
-
-    private Long manuscriptId;
-    private Long authorId;
-    private String title;
-    private String content;
+    private boolean publicationRequested; // 출간 상태
 }

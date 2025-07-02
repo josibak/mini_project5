@@ -31,7 +31,7 @@ spring:
         event-in:
           group: manuscript
 #<<< EDA / Topic Name
-          destination: miniproject
+          destination: AuthorRegistrationApproved
 #>>> EDA / Topic Name
           contentType: application/json
         event-out:
@@ -75,7 +75,7 @@ spring:
       bindings:
         event-in:
           group: manuscript
-          destination: miniproject
+          destination: AuthorRegistrationApproved
           contentType: application/json
         event-out:
           destination: miniproject

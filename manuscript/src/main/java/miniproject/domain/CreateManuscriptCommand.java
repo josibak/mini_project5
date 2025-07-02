@@ -1,9 +1,9 @@
 package miniproject.domain;
 
-import java.time.LocalDate;
-import java.util.*;
+import java.time.LocalDateTime;
 import lombok.Data;
 
+// 원고 생성
 @Data
 public class CreateManuscriptCommand {
 
@@ -11,6 +11,6 @@ public class CreateManuscriptCommand {
     private Long manuscriptId;
     private String title;
     private String content;
-    private Date createdAt;
-    private Date updateAt;
+    // private LocalDateTime createdAt;
+    // private LocalDateTime updateAt;
 }
