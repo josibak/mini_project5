@@ -101,13 +101,11 @@ private Boolean isKtUser;
     }
 //>>> Clean Arch / Port Method
 //<<< Clean Arch / Port Method
-    public void bookOpen(BookOpenCommand bookOpenCommand){
-        
-        //implement business logic here:
-        
-
-
+    public void bookOpen(BookOpenCommand command){
         BookOpened bookOpened = new BookOpened(this);
+        bookOpened.setBookId(command.getBookId());
+        bookOpened.setIsSubscriber(this.getIsSubscriber() != null && this.getIsSubscriber());
+
         bookOpened.publishAfterCommit();
     }
 //>>> Clean Arch / Port Method

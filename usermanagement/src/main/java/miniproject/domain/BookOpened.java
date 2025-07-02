@@ -9,18 +9,20 @@ import miniproject.infra.AbstractEvent;
 //<<< DDD / Domain Event
 @Data
 @ToString
+@NoArgsConstructor
 public class BookOpened extends AbstractEvent {
 
     private Long userId;
     private Long bookId;
-    private Boolean subscribeStatus;
+    private Boolean isSubscriber;
 
     public BookOpened(Member aggregate) {
         super(aggregate);
+        this.userId = aggregate.getUserId();
     }
 
-    public BookOpened() {
-        super();
+    @Override
+    public String getEventType() {
+        return "userBookOpened";
     }
 }
-//>>> DDD / Domain Event

@@ -7,7 +7,5 @@ import lombok.Data;
 @Data
 public class BookOpenCommand {
 
-    private Long userId;
     private Long bookId;
-    private Boolean subscribeStatus;
 }
