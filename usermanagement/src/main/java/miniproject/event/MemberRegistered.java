@@ -1,4 +1,4 @@
-package miniproject.domain;
+package miniproject.event;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -9,20 +9,20 @@ import miniproject.infra.AbstractEvent;
 //<<< DDD / Domain Event
 @Data
 @ToString
-public class BookOpened extends AbstractEvent {
+public class MemberRegistered extends AbstractEvent {
 
     private Long userId;
-    private Long bookId;
-    private Boolean subscribeStatus;
+    private String name;
+    private String email;
 
-    public BookOpened(Member aggregate) {
+    public MemberRegistered(Member aggregate) {
         super(aggregate);
         this.userId = aggregate.getUserId();
-        this.bookId = aggregate.getBookId();
-        this.subscribeStatus = aggregate.getSubscribeStatus();
+        this.name = aggregate.getName();
+        this.email = aggregate.getEmail();
     }
 
-    public BookOpened() {
+    public MemberRegistered() {
         super();
     }
 }

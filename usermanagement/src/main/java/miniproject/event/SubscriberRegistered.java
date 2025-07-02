@@ -1,4 +1,4 @@
-package miniproject.domain;
+package miniproject.event;
 
 import java.time.LocalDate;
 import java.util.*;

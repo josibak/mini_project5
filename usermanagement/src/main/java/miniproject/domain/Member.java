@@ -1,7 +1,12 @@
 package miniproject.domain;
 
-import miniproject.domain.SubscriberRegistered;
-import miniproject.domain.SubscribeFinished;
+import miniproject.event.BookOpened;
+import miniproject.event.KtAuthenticated;
+import miniproject.event.MemberRegistered;
+import miniproject.event.PointBookOpened;
+import miniproject.event.SubscribeFinished;
+import miniproject.event.SubscriberRegistered;
+import miniproject.event.SubscribtionRequested;
 import miniproject.UsermanagementApplication;
 import javax.persistence.*;
 import java.util.List;
@@ -16,49 +21,29 @@ import java.util.Collections;
 @Entity
 @Table(name="Member_table")
 @Data
-
-//<<< DDD / Aggregate Root
 public class Member  {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    
-    
-    
-private Long userId;    
-    
-    
-private Long bookId;    
-    
-    
-private String name;    
-    
-    
-private String email;    
-    
-    
-private Boolean subscribeStatus;    
-    
-    
-private Boolean isKtUser;
 
+    private Long userId;
+    private Long bookId;
+    private String name;
+    private String email;
+    private Boolean isSubscriber;
+    private Boolean isKtUser;
 
-@Transient
-public Object Repository;
+    @Transient
+    public Object Repository;
 
     @PostPersist
     public void onPostPersist(){
 
-
         SubscriberRegistered subscriberRegistered = new SubscriberRegistered(this);
         subscriberRegistered.publishAfterCommit();
 
-
-
         SubscribeFinished subscribeFinished = new SubscribeFinished(this);
         subscribeFinished.publishAfterCommit();
-
-    
     }
 
     public static MemberRepository repository(){
@@ -68,12 +53,11 @@ public Object Repository;
 
 
 
-//<<< Clean Arch / Port Method
     public void openBookPoint(OpenBookPointCommand command){
         
         //implement business logic here:
         this.bookId = command.getBookId();
-        this.subscribeStatus = command.getSubscribeStatus();
+        this.isSubscriber = command.getSubscribeStatus();
         
         PointBookOpened pointBookOpened = new PointBookOpened(this);
         pointBookOpened.publishAfterCommit();
@@ -83,7 +67,7 @@ public Object Repository;
     public void subscribtionRequest(SubscribtionRequestCommand command){
         
         //implement business logic here:
-        this.subscribeStatus = command.getSubscribe();
+        this.isSubscriber = command.getSubscribe();
 
         SubscribtionRequested event = new SubscribtionRequested(this);
         event.publishAfterCommit();
@@ -105,7 +89,7 @@ public Object Repository;
         
         this.name = result.getName();
         this.email = result.getEmail();
-        this.subscribeStatus = false;
+        this.isSubscriber = false;
         this.isKtUser = result.getIsKtUser();
 
         MemberRegistered memberRegistered = new MemberRegistered(this);
@@ -129,14 +113,11 @@ public Object Repository;
         
         //implement business logic here:
         this.bookId = bookOpenCommand.getBookId();
-        this.subscribeStatus = bookOpenCommand.getSubscribeStatus();
+        this.isSubscriber = bookOpenCommand.getSubscribeStatus();
 
         BookOpened bookOpened = new BookOpened(this);
         bookOpened.publishAfterCommit();
     }
-//>>> Clean Arch / Port Method
-
-
 
 }
-//>>> DDD / Aggregate Root
+

@@ -6,6 +6,8 @@ import javax.naming.NameParser;
 import javax.transaction.Transactional;
 import miniproject.config.kafka.KafkaProcessor;
 import miniproject.domain.*;
+import miniproject.event.SubscribeFinished;
+import miniproject.event.SubscriberRegistered;
 import miniproject.infra.SubscriptionCompleted;
 import miniproject.infra.SubscriptionExpired;
 import org.springframework.beans.factory.annotation.Autowired;

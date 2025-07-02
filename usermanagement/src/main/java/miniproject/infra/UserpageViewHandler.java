@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import miniproject.config.kafka.KafkaProcessor;
 import miniproject.domain.*;
+import miniproject.event.MemberRegistered;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Payload;
