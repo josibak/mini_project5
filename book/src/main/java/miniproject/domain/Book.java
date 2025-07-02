@@ -1,22 +1,15 @@
 package miniproject.domain;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import lombok.*;
 import javax.persistence.*;
-import lombok.Data;
+
 import miniproject.BookApplication;
-import miniproject.domain.BookDesignatedAsBestSeller;
-import miniproject.domain.BookRegistered;
-import miniproject.domain.ViewCountIncreased;
 
 @Entity
 @Table(name = "Book_table")
 @Data
-//<<< DDD / Aggregate Root
+@NoArgsConstructor
+@AllArgsConstructor
 public class Book {
 
     @Id
@@ -27,107 +20,48 @@ public class Book {
 
     private String summary;
 
-    private Integer viewCount;
+    @Lob
+    private String content;
 
-    private Boolean isBestSeller;
+    private String postUrl;
 
+    private Integer viewCount = 0;
+
+    private Boolean isBestSeller = false;
+
+    /**
+     * 기존 static 방식에서 사용하던 repository 참조 헬퍼
+     * 이제는 publishingCompleted만 여전히 static이라 유지
+     */
     public static BookRepository repository() {
-        BookRepository bookRepository = BookApplication.applicationContext.getBean(
-            BookRepository.class
-        );
-        return bookRepository;
+        return BookApplication.applicationContext.getBean(BookRepository.class);
     }
 
-    //<<< Clean Arch / Port Method
-    public static void publishingCompleted(PublicCompleted publicCompleted) {
-        //implement business logic here:
+  
+    //변경된 조회수 증가 로직
+    public void increaseViewCount() {
+        if (this.viewCount == null) this.viewCount = 0;
+        this.viewCount++;
+        System.out.println("increaseViewCount called. New viewCount: " + this.viewCount);
 
-        /** Example 1:  new item 
+
+        if (this.viewCount >= 100 && !Boolean.TRUE.equals(this.isBestSeller)) {
+            this.isBestSeller = true;
+            System.out.println("isBestSeller set to true");
+        }
+    }
+
+
+    //출판 완료 이벤트 수신 시 Book 인스턴스를 생성하고 저장
+    //이벤트에 포함된 책 정보로 새로운 Book 엔티티 생성
+    public static void publishingCompleted(PublicCompleted event) {
         Book book = new Book();
+        book.setTitle(event.getTitle());
+        book.setSummary(event.getSummary());
+        book.setContent(event.getContent());
+        book.setPostUrl(event.getPostUrl());
+        book.setViewCount(0);
+        book.setIsBestSeller(false);
         repository().save(book);
-
-        BookRegistered bookRegistered = new BookRegistered(book);
-        bookRegistered.publishAfterCommit();
-        */
-
-        /** Example 2:  finding and process
-        
-        // if publicCompleted.gptId exists, use it
-        
-        // ObjectMapper mapper = new ObjectMapper();
-        // Map<, Object> publicationMap = mapper.convertValue(publicCompleted.getGptId(), Map.class);
-
-        repository().findById(publicCompleted.get???()).ifPresent(book->{
-            
-            book // do something
-            repository().save(book);
-
-            BookRegistered bookRegistered = new BookRegistered(book);
-            bookRegistered.publishAfterCommit();
-
-         });
-        */
-
     }
-
-    //>>> Clean Arch / Port Method
-    //<<< Clean Arch / Port Method
-    public static void bookOpenedByPoint(PointBookOpened pointBookOpened) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        Book book = new Book();
-        repository().save(book);
-
-        ViewCountIncreased viewCountIncreased = new ViewCountIncreased(book);
-        viewCountIncreased.publishAfterCommit();
-        */
-
-        /** Example 2:  finding and process
-        
-
-        repository().findById(pointBookOpened.get???()).ifPresent(book->{
-            
-            book // do something
-            repository().save(book);
-
-            ViewCountIncreased viewCountIncreased = new ViewCountIncreased(book);
-            viewCountIncreased.publishAfterCommit();
-
-         });
-        */
-
-    }
-
-    //>>> Clean Arch / Port Method
-    //<<< Clean Arch / Port Method
-    public static void bookOpenedBySubscription(BookOpened bookOpened) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        Book book = new Book();
-        repository().save(book);
-
-        BookDesignatedAsBestSeller bookDesignatedAsBestSeller = new BookDesignatedAsBestSeller(book);
-        bookDesignatedAsBestSeller.publishAfterCommit();
-        */
-
-        /** Example 2:  finding and process
-        
-
-        repository().findById(bookOpened.get???()).ifPresent(book->{
-            
-            book // do something
-            repository().save(book);
-
-            BookDesignatedAsBestSeller bookDesignatedAsBestSeller = new BookDesignatedAsBestSeller(book);
-            bookDesignatedAsBestSeller.publishAfterCommit();
-
-         });
-        */
-
-    }
-    //>>> Clean Arch / Port Method
-
 }
-//>>> DDD / Aggregate Root
