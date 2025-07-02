@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserpageViewHandler {
 
+    private static final String NO = null;
+    private static final String NOTSUBSCRIBED = null;
     //<<< DDD / CQRS
     @Autowired
     private UserpageRepository userpageRepository;
@@ -31,7 +33,6 @@ public class UserpageViewHandler {
             userpage.setName(memberRegistered.getName());
             userpage.setEmail(memberRegistered.getEmail());
             userpage.setIsKtUser(NO);
-            userpage.setSubscribeStatus(NOTSUBSCRIBED);
             userpage.setSubscribeStatus(NOTSUBSCRIBED);
             userpage.setName(memberRegistered.getName());
             userpage.setEmail(memberRegistered.getEmail());

@@ -15,9 +15,6 @@ public class SubcriptionCompleted extends AbstractEvent {
     private String userId;
     private Date subscriptionStartedAt;
     private Date subscriptionExpiredAt;
-    private String userId;
-    private Date subscriptionStartedAt;
-    private Date subscriptionExpiredAt;
 
     public SubcriptionCompleted(Subcription aggregate) {
         super(aggregate);

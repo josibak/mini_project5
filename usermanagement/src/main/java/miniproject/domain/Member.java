@@ -92,12 +92,6 @@ private Boolean isKtUser;
         //implement business logic here:
         
 
-        miniproject.external.MemberQuery memberQuery = new miniproject.external.MemberQuery();
-        // memberQuery.set??()        
-          = MemberApplication.applicationContext
-            .getBean(miniproject.external.Service.class)
-            .member(memberQuery);
-
         MemberRegistered memberRegistered = new MemberRegistered(this);
         memberRegistered.publishAfterCommit();
     }
@@ -127,5 +121,14 @@ private Boolean isKtUser;
 
 
 
+    public Long getUserId() {
+        return userId;
+    }
+    public String getName() {
+        return name;
+    }
+    public String getEmail() {
+        return email;
+    }
 }
 //>>> DDD / Aggregate Root

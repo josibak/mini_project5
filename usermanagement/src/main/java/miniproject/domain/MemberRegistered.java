@@ -17,10 +17,25 @@ public class MemberRegistered extends AbstractEvent {
 
     public MemberRegistered(Member aggregate) {
         super(aggregate);
+        if (aggregate != null) {
+            this.userId = aggregate.getUserId();
+            this.name = aggregate.getName();
+            this.email = aggregate.getEmail();
+        }
     }
 
     public MemberRegistered() {
         super();
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+    public String getName() {
+        return name;
+    }
+    public String getEmail() {
+        return email;
     }
 }
 //>>> DDD / Domain Event

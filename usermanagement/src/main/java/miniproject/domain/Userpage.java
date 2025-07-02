@@ -21,7 +21,24 @@ public class Userpage {
     private String subscribeStatus;
     private String isKtUser;
     private String pointBalance;
-    private String pointBalance;
-    private String pointBalance;
-    private String pointBalance;
+
+    public void setIsKtUser(String isKtUser) {
+        this.isKtUser = isKtUser;
+    }
+
+    public void setSubscribeStatus(String subscribeStatus) {
+        this.subscribeStatus = subscribeStatus;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }

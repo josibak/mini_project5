@@ -19,4 +19,4 @@ nvm install 14.19.0 && nvm use 14.19.0
 export NODE_OPTIONS=--openssl-legacy-provider
 
 cd infra
-docker-compose up
+docker-compose Aup
