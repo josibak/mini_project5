@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8086
 
 spring:
   application:
@@ -57,6 +57,16 @@ server:
 
 spring:
   profiles: docker
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
   jpa:
     properties:
       hibernate:
@@ -67,7 +77,7 @@ spring:
     stream:
       kafka:
         binder:
-          brokers: my-kafka:9092
+          brokers: kafka:9092
         streams:
           binder:
             configuration:
@@ -84,9 +94,13 @@ spring:
         event-out:
           destination: miniproject
           contentType: application/json
+  server:
+    port: 8086
 
 api:
   url: 
     usermanagement: usermanagement:8080 
+
+
     
 

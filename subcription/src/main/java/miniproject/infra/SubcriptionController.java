@@ -7,8 +7,6 @@ import javax.transaction.Transactional;
 import miniproject.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 //<<< Clean Arch / Inbound Adaptor
 
@@ -36,6 +34,17 @@ public class SubcriptionController {
     @GetMapping("/{userId}")
     public Optional<Subcription> getByUserId(@PathVariable Long userId) {
         return Optional.ofNullable(subcriptionRepository.findTopByUserIdOrderBySubscribeIdDesc(userId));
+    }
+    
+    // 관리자접근으로 구독 강제 취소
+    @PostMapping("/force-expire/{userId}")
+    public void forceExpire(@PathVariable Long userId) {
+        Subcription sub = subcriptionRepository.findTopByUserIdOrderBySubscribeIdDesc(userId);
+        if (sub == null) {
+            throw new RuntimeException("구독 정보가 없습니다. userId=" + userId);
+        }
+        SubscriptionFinished event = new SubscriptionFinished(sub);
+        event.publishAfterCommit();
     }
 }
 //>>> Clean Arch / Inbound Adaptor

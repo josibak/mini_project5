@@ -29,10 +29,6 @@ public class Book {
 
     private Boolean isBestSeller = false;
 
-    /**
-     * 기존 static 방식에서 사용하던 repository 참조 헬퍼
-     * 이제는 publishingCompleted만 여전히 static이라 유지
-     */
     public static BookRepository repository() {
         return BookApplication.applicationContext.getBean(BookRepository.class);
     }

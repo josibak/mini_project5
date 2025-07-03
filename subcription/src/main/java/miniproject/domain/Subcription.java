@@ -10,7 +10,7 @@ import javax.persistence.*;
 import lombok.Data;
 import miniproject.SubcriptionApplication;
 import miniproject.domain.SubcriptionCompleted;
-import miniproject.domain.SubscriptionExpired;
+import miniproject.domain.SubscriptionFinished;
 
 @Entity
 @Table(name = "Subcription_table")

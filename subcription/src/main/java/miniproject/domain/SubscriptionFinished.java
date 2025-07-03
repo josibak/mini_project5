@@ -9,20 +9,20 @@ import miniproject.infra.AbstractEvent;
 //<<< DDD / Domain Event
 @Data
 @ToString
-public class SubscriptionExpired extends AbstractEvent {
+public class SubscriptionFinished extends AbstractEvent {
 
     private Long subscribeId;
-    private String userId;
+    private Long userId;
     private Date subscriptionStartedAt;
     private Date subscriptionExpiredAt;
     private String status;
 
 
-    public SubscriptionExpired(Subcription aggregate) {
+    public SubscriptionFinished(Subcription aggregate) {
         super(aggregate);
     }
 
-    public SubscriptionExpired() {
+    public SubscriptionFinished() {
         super();
     }
 }
