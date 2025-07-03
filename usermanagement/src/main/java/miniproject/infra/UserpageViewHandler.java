@@ -66,16 +66,7 @@ public class UserpageViewHandler {
         try {
             if (event.getUserId() == null) return;
 
-            // SubscriptionExpired는 userId가 String으로 올 수 있으므로 변환
-            Long userId = null;
-            try {
-                userId = Long.parseLong(event.getUserId());
-            } catch (Exception ex) {
-                System.out.println("Invalid userId format in SubscriptionExpired event");
-                return;
-            }
-
-            Optional<Userpage> optional = userpageRepository.findById(userId);
+            Optional<Userpage> optional = userpageRepository.findById(event.getUserId());
             if (optional.isPresent()) {
                 Userpage userpage = optional.get();
                 userpage.setSubscribeStatus("NOTSUBSCRIBED");

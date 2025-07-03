@@ -54,25 +54,16 @@ public class PolicyHandler {
 
         System.out.println("### [Event Received] SubscriptionExpired: " + event);
 
-        // userId가 String일 경우 Long으로 파싱 (Member 테이블이 Long 기반이면)
-        Long parsedUserId;
-        try {
-            parsedUserId = Long.parseLong(event.getUserId());
-        } catch (Exception e) {
-            System.out.println("### [Parse Error] Invalid userId: " + event.getUserId());
-            return;
-        }
-
-        Optional<Member> memberOptional = memberRepository.findById(parsedUserId);
+        Optional<Member> memberOptional = memberRepository.findById(event.getUserId());
 
         if (memberOptional.isPresent()) {
             Member member = memberOptional.get();
             member.setIsSubscriber(false);  // 또는 member.setSubscribeStatus(false)
             memberRepository.save(member);
 
-            System.out.println("### [Update Success] userId " + parsedUserId + " is now unsubscribed.");
+            System.out.println("### [Update Success] userId " + event.getUserId() + " is now unsubscribed.");
         } else {
-            System.out.println("### [Update Failed] No member found for userId " + parsedUserId);
+            System.out.println("### [Update Failed] No member found for userId " + event.getUserId());
         }
     }
 
