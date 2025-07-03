@@ -1,5 +1,6 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { User, CheckCircle, XCircle, Eye, MessageSquare } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -10,57 +11,55 @@ const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(true);
   const [selectedAuthor, setSelectedAuthor] = useState<any>(null);
-  
-  const [applications, setApplications] = useState([
-    {
-      id: 1,
-      name: "김작가",
-      email: "writer1@example.com",
-      phone: "010-1234-5678",
-      appliedDate: "2024-12-20",
-      status: "대기중",
-      bio: "안녕하세요. 10년간의 글쓰기 경험을 바탕으로 독자들에게 감동을 전하고 싶습니다. 주로 로맨스와 힐링 장르를 다루며, 일상의 소소한 행복을 글로 표현하는 것을 좋아합니다.",
-      portfolio: "https://kim-writer.com",
-      works: ["달빛 속의 약속", "카페에서 만난 사람"]
-    },
-    {
-      id: 2,
-      name: "박소설가",
-      email: "novelist@example.com", 
-      phone: "010-2345-6789",
-      appliedDate: "2024-12-18",
-      status: "대기중",
-      bio: "판타지 장르를 전문으로 하는 작가입니다. 상상력이 풍부한 세계관과 매력적인 캐릭터로 독자들을 새로운 모험으로 안내하고 싶습니다. 웹소설 플랫폼에서 5년간 활동했습니다.",
-      portfolio: "https://park-novelist.com",
-      works: ["마법사의 귀환", "용의 전설"]
-    },
-    {
-      id: 3,
-      name: "이시인",
-      email: "poet@example.com",
-      phone: "010-3456-7890", 
-      appliedDate: "2024-12-15",
-      status: "승인됨",
-      bio: "시와 에세이를 주로 작성하는 작가입니다.",
-      portfolio: "https://lee-poet.com",
-      works: ["봄날의 기억", "밤하늘의 별"]
-    }
-  ]);
+  const [applications, setApplications] = useState<any[]>([]);
 
-  const handleApprove = (id: number) => {
-    setApplications(prev => 
-      prev.map(app => 
-        app.id === id ? { ...app, status: "승인됨" } : app
-      )
-    );
+  useEffect(() => {
+    if (isAuthenticated) {
+      axios.get(`${import.meta.env.VITE_API_BASE_URL}/authors`)
+        .then(res => {
+          const mapped = res.data.map((app: any) => ({
+            ...app,
+            status: statusToKo(app.registrationStatus), // 💡 여기서 변환
+          }));
+          setApplications(mapped);
+        })
+        .catch(err => console.error('작가 리스트 불러오기 실패:', err));
+    }
+  }, [isAuthenticated]);
+
+  const statusToKo = (status: string) => {
+    switch (status) {
+      case 'PENDING':
+        return '대기중';
+      case 'APPROVED':
+        return '승인됨';
+      case 'REJECTED':
+        return '거절됨';
+      default:
+        return '알수없음'; 
+    }
   };
 
-  const handleReject = (id: number) => {
-    setApplications(prev => 
-      prev.map(app => 
-        app.id === id ? { ...app, status: "거절됨" } : app
-      )
-    );
+  const handleApprove = async (id: number) => {
+    try {
+      await axios.put(`${import.meta.env.VITE_API_BASE_URL}/authors/${id}/approveauthorregistration`);
+      setApplications((prev) =>
+        prev.map((app) => (app.authorId === id ? { ...app, status: "승인됨" } : app))
+      );
+    } catch (error) {
+      console.error('승인 처리 중 오류:', error);
+    }
+  };
+
+  const handleReject = async (id: number) => {
+    try {
+      await axios.put(`${import.meta.env.VITE_API_BASE_URL}/authors/${id}/rejectauthorregistration`);
+      setApplications((prev) =>
+        prev.map((app) => (app.authorId === id ? { ...app, status: "거절됨" } : app))
+      );
+    } catch (error) {
+      console.error('거절 처리 중 오류:', error);
+    }
   };
 
   const handleViewDetails = (author: any) => {
@@ -146,7 +145,7 @@ const Admin = () => {
                       </div>
                       <div>
                         <h3 className="text-lg font-medium text-gray-900">{application.name}</h3>
-                        <p className="text-sm text-gray-600">신청일: {application.appliedDate}</p>
+                        <p className="text-sm text-gray-600">신청일: {new Intl.DateTimeFormat('ko-KR').format(new Date(application.appliedDate))}</p>
                       </div>
                     </div>
                     {getStatusBadge(application.status)}
@@ -156,9 +155,6 @@ const Admin = () => {
                     <div className="flex items-center gap-2">
                       <MessageSquare className="w-4 h-4 text-gray-400" />
                       <span className="text-sm text-gray-600">{application.email}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-600">📞 {application.phone}</span>
                     </div>
                   </div>
                   
@@ -182,7 +178,7 @@ const Admin = () => {
                     {application.status === "대기중" && (
                       <>
                         <Button
-                          onClick={() => handleApprove(application.id)}
+                          onClick={() => handleApprove(application.authorId)}
                           size="sm"
                           className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2"
                         >
@@ -190,7 +186,7 @@ const Admin = () => {
                           승인
                         </Button>
                         <Button
-                          onClick={() => handleReject(application.id)}
+                          onClick={() => handleReject(application.authorId)}
                           variant="outline"
                           size="sm"
                           className="text-red-600 border-red-200 hover:bg-red-50 flex items-center gap-2"
@@ -243,12 +239,8 @@ const Admin = () => {
                 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-2">연락처</h4>
-                    <p className="text-gray-600">{selectedAuthor.phone}</p>
-                  </div>
-                  <div>
                     <h4 className="font-medium text-gray-900 mb-2">신청일</h4>
-                    <p className="text-gray-600">{selectedAuthor.appliedDate}</p>
+                    <p className="text-gray-600">{new Intl.DateTimeFormat('ko-KR').format(new Date(selectedAuthor.appliedDate))}</p>
                   </div>
                 </div>
                 
@@ -267,15 +259,6 @@ const Admin = () => {
                   >
                     {selectedAuthor.portfolio}
                   </a>
-                </div>
-                
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">대표 작품</h4>
-                  <ul className="space-y-1">
-                    {selectedAuthor.works.map((work: string, index: number) => (
-                      <li key={index} className="text-gray-600">• {work}</li>
-                    ))}
-                  </ul>
                 </div>
               </div>
             </div>

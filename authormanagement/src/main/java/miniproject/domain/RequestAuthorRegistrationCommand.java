@@ -8,6 +8,7 @@ import lombok.Data;
 public class RequestAuthorRegistrationCommand {
 
     private String name;
+    private String email;
     private String bio;
     private String portfolio;
 }
