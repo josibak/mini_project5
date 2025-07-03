@@ -19,7 +19,7 @@ const Admin = () => {
         .then(res => {
           const mapped = res.data.map((app: any) => ({
             ...app,
-            status: statusToKo(app.registrationStatus), // 💡 여기서 변환
+            status: statusToKo(app.registrationStatus),
           }));
           setApplications(mapped);
         })
