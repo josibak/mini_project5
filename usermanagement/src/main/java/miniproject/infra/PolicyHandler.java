@@ -21,32 +21,46 @@ public class PolicyHandler {
     @Autowired
     MemberRepository memberRepository;
 
-    // Kafka에서 들어오는 문자열 처리 (디버깅용)
+    // 디버깅용 전체 수신 로그
     @StreamListener(KafkaProcessor.INPUT)
     public void whatever(@Payload String eventString) {
-        // Optional: 로그 찍기 등
+        System.out.println("[Kafka Raw Payload] " + eventString);
+    }
+
+    @StreamListener(KafkaProcessor.INPUT)
+    public void debugRawMessage(org.springframework.messaging.Message<?> message) {
+        System.out.println("=== [Kafka Raw Message] ===");
+        System.out.println("Payload: " + message.getPayload());
+        System.out.println("Headers: " + message.getHeaders());
     }
 
     // 구독 완료 이벤트 수신 → subscribeStatus = true
-    @StreamListener(KafkaProcessor.INPUT)
+    @StreamListener(
+        value = KafkaProcessor.INPUT,
+        condition = "headers['type']=='SubcriptionCompleted'"
+    )
     public void onSubscriptionCompleted(@Payload SubscriptionCompleted event) {
         System.out.println("##### SubscriptionCompleted 이벤트 수신됨: " + event);
         memberRepository.findById(event.getUserId()).ifPresent(member -> {
-            System.out.println("########################Before activate :  " + member.getSubscribeStatus());
-            member.activateSubscription(); // 상태 변경 로직은 Member 엔티티 내부
-            System.out.println("(\"########################After activate : " + member.getSubscribeStatus());
+            System.out.println("########################Before activate : " + member.getSubscribeStatus());
+            member.activateSubscription(); // Member 엔티티 내부 메서드
+            System.out.println("########################After activate : " + member.getSubscribeStatus());
             memberRepository.save(member);
-            System.out.println("(\"########################Saved member : " + member);
+            System.out.println("########################Saved member : " + member);
         });
     }
 
     // 구독 만료 이벤트 수신 → subscribeStatus = false
-    @StreamListener(KafkaProcessor.INPUT)
+    @StreamListener(
+        value = KafkaProcessor.INPUT,
+        condition = "headers['type']=='SubscriptionFinished'"
+    )
     public void onSubscriptionFinished(@Payload SubscriptionFinished event) {
         System.out.println("##### SubscriptionFinished 이벤트 수신됨: " + event);
         memberRepository.findById(event.getUserId()).ifPresent(member -> {
-            member.deactivateSubscription();
+            member.deactivateSubscription(); // Member 엔티티 내부 메서드
             memberRepository.save(member);
+            System.out.println("##### Updated member (subscription off): " + member);
         });
     }
 }

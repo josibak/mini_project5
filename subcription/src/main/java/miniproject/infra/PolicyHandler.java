@@ -19,13 +19,11 @@ public class PolicyHandler {
 
     @Autowired
     SubcriptionRepository subcriptionRepository;
-
     @StreamListener(KafkaProcessor.INPUT)
     public void whatever(@Payload String eventString) {}
-
     @StreamListener(
         value = KafkaProcessor.INPUT,
-        condition = "headers['type']=='SubscribtionRequested'"
+        condition = "headers['type']=='SubscriptionRequested'"
     )
     public void wheneverSubscribtionRequested_SubcriptionRequest(
         @Payload SubscribtionRequested subscribtionRequested

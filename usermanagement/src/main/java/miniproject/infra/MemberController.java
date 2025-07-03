@@ -47,7 +47,7 @@ public class MemberController {
                 .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
         member.openBook(bookId);
         memberRepository.save(member);
-        return "도서 열람 처리 완료";
+        return "도서 열람 권한 처리 완료";
     }
 
     // 4. 책 열람 권한 부여 API (PointService가 호출)

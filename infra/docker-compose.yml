@@ -104,16 +104,16 @@ services:
     restart: on-failure
 
 
-  # subcription:
-  #   build: ../subcription   
-  #   container_name: subcription
-  #   ports:
-  #     - "8087:8087"
-  #   environment:
-  #     - SPRING_PROFILES_ACTIVE=docker
-  #   depends_on:
-  #     - kafka
-  #   restart: on-failure
+  subcription:
+    build: ../subcription   
+    container_name: subcription
+    ports:
+      - "8087:8087"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - kafka
+    restart: on-failure
 
   point:
     build: ../point
