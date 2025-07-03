@@ -1,5 +1,6 @@
 package miniproject.infra;
 
+import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -7,13 +8,10 @@ import javax.transaction.Transactional;
 import miniproject.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-//<<< Clean Arch / Inbound Adaptor
 
 @RestController
-// @RequestMapping(value="/authors")
+@RequestMapping(value="/authors")
 @Transactional
 public class AuthorController {
 
@@ -21,7 +19,7 @@ public class AuthorController {
     AuthorRepository authorRepository;
 
     @RequestMapping(
-        value = "/authors/requestauthorregistration",
+        value = "",
         method = RequestMethod.POST,
         produces = "application/json;charset=UTF-8"
     )
@@ -30,9 +28,6 @@ public class AuthorController {
         HttpServletResponse response,
         @RequestBody RequestAuthorRegistrationCommand requestAuthorRegistrationCommand
     ) throws Exception {
-        System.out.println(
-            "##### /author/requestAuthorRegistration  called #####"
-        );
         Author author = new Author();
         author.requestAuthorRegistration(requestAuthorRegistrationCommand);
         authorRepository.save(author);
@@ -40,51 +35,66 @@ public class AuthorController {
     }
 
     @RequestMapping(
-        value = "/authors/{id}/approveauthorregistration",
+        value = "/{id}/approveauthorregistration",
         method = RequestMethod.PUT,
         produces = "application/json;charset=UTF-8"
     )
     public Author approveAuthorRegistration(
         @PathVariable(value = "id") Long id,
-        @RequestBody ApproveAuthorRegistrationCommand approveAuthorRegistrationCommand,
         HttpServletRequest request,
         HttpServletResponse response
     ) throws Exception {
-        System.out.println(
-            "##### /author/approveAuthorRegistration  called #####"
-        );
         Optional<Author> optionalAuthor = authorRepository.findById(id);
 
         optionalAuthor.orElseThrow(() -> new Exception("No Entity Found"));
         Author author = optionalAuthor.get();
-        author.approveAuthorRegistration(approveAuthorRegistrationCommand);
+        author.approveAuthorRegistration();
 
         authorRepository.save(author);
         return author;
     }
 
     @RequestMapping(
-        value = "/authors/{id}/rejectauthorregistration",
+        value = "/{id}/rejectauthorregistration",
         method = RequestMethod.PUT,
         produces = "application/json;charset=UTF-8"
     )
     public Author rejectAuthorRegistration(
         @PathVariable(value = "id") Long id,
-        @RequestBody RejectAuthorRegistrationCommand rejectAuthorRegistrationCommand,
         HttpServletRequest request,
         HttpServletResponse response
     ) throws Exception {
-        System.out.println(
-            "##### /author/rejectAuthorRegistration  called #####"
-        );
         Optional<Author> optionalAuthor = authorRepository.findById(id);
 
         optionalAuthor.orElseThrow(() -> new Exception("No Entity Found"));
         Author author = optionalAuthor.get();
-        author.rejectAuthorRegistration(rejectAuthorRegistrationCommand);
+        author.rejectAuthorRegistration();
 
         authorRepository.save(author);
         return author;
     }
+
+    // 대기 상태의 작가들만 조회
+    @RequestMapping(
+        value = "",
+        method = RequestMethod.GET,
+        produces = "application/json;charset=UTF-8"
+    )
+    public List<Author> getAuthors() throws Exception {
+        return authorRepository.findByRegistrationStatus(Author.RegistrationStatus.PENDING);
+    }
+
+    @RequestMapping(
+        value = "/{id}",
+        method = RequestMethod.GET,
+        produces = "application/json;charset=UTF-8"
+    )
+    public Author getAuthor(@PathVariable(value = "id") Long id) throws Exception {
+        Optional<Author> optionalAuthor = authorRepository.findById(id);
+
+        optionalAuthor.orElseThrow(() -> new Exception("No Entity Found"));
+        Author author = optionalAuthor.get();
+        return author;
+    }
+
 }
-//>>> Clean Arch / Inbound Adaptor

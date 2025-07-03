@@ -1,36 +1,28 @@
+
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio</title>
+    <meta name="description" content="Minimal Portfolio" />
+    <meta name="author" content="Portfolio" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Materio - Vuetify Vuejs Admin Template</title>
-  <link rel="stylesheet" type="text/css" href="/loader.css" />
-</head>
+    <meta property="og:title" content="Portfolio" />
+    <meta property="og:description" content="Minimal Portfolio" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
 
-<body>
-  <div id="app">
-    <div id="loading-bg">
-      <div class="loading-logo">
-      </div>
-      <div class="loading">
-        <div class="effect-1 effects"></div>
-        <div class="effect-2 effects"></div>
-        <div class="effect-3 effects"></div>
-      </div>
-    </div>
-  </div>
-  <script type="module" src="/src/main.js"></script>
-  <script>
-    const loaderColor = localStorage.getItem('Materio-initial-loader-bg') || '#FFFFFF'
-    const primaryColor = localStorage.getItem('Materio-initial-loader-color') || '#9155FD'
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@lovable_dev" />
+    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+  </head>
 
-    if (loaderColor)
-      document.documentElement.style.setProperty('--initial-loader-bg', loaderColor)
-    if (primaryColor)
-      document.documentElement.style.setProperty('--initial-loader-color', primaryColor)
-
-  </script>
-</body>
-
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

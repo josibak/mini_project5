@@ -29,3 +29,4 @@ public class PublicCompleted extends AbstractEvent {
     }
 }
 //>>> DDD / Domain Event
+

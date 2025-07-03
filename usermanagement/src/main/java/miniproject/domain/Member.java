@@ -10,13 +10,10 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 
-
 @Entity
-@Table(name="Member_table")
+@Table(name = "member_table")
 @Data
-
-//<<< DDD / Aggregate Root
-public class Member  {
+public class Member {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)

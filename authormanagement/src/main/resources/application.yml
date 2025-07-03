@@ -8,6 +8,12 @@ spring:
 
 spring:
   profiles: default
+
+  # jackson:
+  #   default-property-inclusion: NON_NULL
+  #   serialization:
+  #     WRITE_ENUMS_USING_TO_STRING: true
+
   jpa:
     properties:
       hibernate:
@@ -30,14 +36,10 @@ spring:
       bindings:
         event-in:
           group: authormanagement
-#<<< EDA / Topic Name
           destination: miniproject
-#>>> EDA / Topic Name
           contentType: application/json
         event-out:
-#<<< EDA / Topic Name
           destination: miniproject
-#>>> EDA / Topic Name
           contentType: application/json
 
 logging:

@@ -6,7 +6,7 @@ import java.util.List;
 import javax.persistence.*;
 import lombok.Data;
 
-//<<< EDA / CQRS
+// //<<< EDA / CQRS
 @Entity
 @Table(name = "Userpage_table")
 @Data

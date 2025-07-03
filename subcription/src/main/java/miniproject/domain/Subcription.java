@@ -28,16 +28,7 @@ public class Subcription {
 
     private Date subscriptionExpiredAt;
 
-    @PostPersist
-    public void onPostPersist() {
-        SubcriptionCompleted subcriptionCompleted = new SubcriptionCompleted(
-            this
-        );
-        subcriptionCompleted.publishAfterCommit();
-
-        SubscriptionExpired subscriptionExpired = new SubscriptionExpired(this);
-        subscriptionExpired.publishAfterCommit();
-    }
+    private String status;
 
     public static SubcriptionRepository repository() {
         SubcriptionRepository subcriptionRepository = SubcriptionApplication.applicationContext.getBean(
@@ -47,30 +38,11 @@ public class Subcription {
     }
 
     //<<< Clean Arch / Port Method
-    public static void subcriptionRequest(
-        SubscribtionRequested subscribtionRequested
-    ) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        Subcription subcription = new Subcription();
-        repository().save(subcription);
-
-        */
-
-        /** Example 2:  finding and process
-        
-
-        repository().findById(subscribtionRequested.get???()).ifPresent(subcription->{
-            
-            subcription // do something
-            repository().save(subcription);
-
-
-         });
-        */
-
+    public static void subcriptionRequest(SubscribtionRequested subscribtionRequested) {
+        // 이벤트만 발행, 상태 변경/저장 X
+        subscribtionRequested.publishAfterCommit();
     }
+
     //>>> Clean Arch / Port Method
 
 }

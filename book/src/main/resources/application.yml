@@ -1,19 +1,35 @@
-server:
-  port: 8080
-
+# 공통 설정 (모든 profile에 적용)
 spring:
   application:
     name: book
+
+logging:
+  level:
+    org.hibernate.type: trace
+    org.springframework.cloud: debug
+
 ---
 
+# default 프로파일 설정 (로컬 개발용)
 spring:
   profiles: default
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
   jpa:
+    hibernate:
+      ddl-auto: create
     properties:
       hibernate:
         show_sql: true
         format_sql: true
         implicit_naming_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
+    database-platform: org.hibernate.dialect.H2Dialect
   cloud:
     stream:
       kafka:
@@ -30,35 +46,39 @@ spring:
       bindings:
         event-in:
           group: book
-#<<< EDA / Topic Name
           destination: miniproject
-#>>> EDA / Topic Name
           contentType: application/json
         event-out:
-#<<< EDA / Topic Name
           destination: miniproject
-#>>> EDA / Topic Name
           contentType: application/json
 
-logging:
-  level:
-    org.hibernate.type: trace
-    org.springframework.cloud: debug
-
-
 server:
-  port: 8085
+  port: 8080
 
 ---
 
+# docker 프로파일 설정 (도커 컨테이너 실행용)
 spring:
   profiles: docker
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true  #테스트 시에만 사용
   jpa:
+    hibernate:
+      ddl-auto: create
     properties:
       hibernate:
         show_sql: true
         format_sql: true
         implicit_naming_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
+    database-platform: org.hibernate.dialect.H2Dialect
   cloud:
     stream:
       kafka:
@@ -81,4 +101,5 @@ spring:
           destination: miniproject
           contentType: application/json
 
-
+server:
+  port: 8085

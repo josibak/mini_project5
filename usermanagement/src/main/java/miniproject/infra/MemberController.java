@@ -1,22 +1,19 @@
 package miniproject.infra;
 
-import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
-import miniproject.domain.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import miniproject.domain.Member;
+import miniproject.domain.MemberRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 //<<< Clean Arch / Inbound Adaptor
 
 @RestController
-// @RequestMapping(value="/members")
-@Transactional
+@RequiredArgsConstructor
+@RequestMapping("/members")
 public class MemberController {
 
-    @Autowired
-    MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
 
     @RequestMapping(
@@ -86,4 +83,3 @@ public class MemberController {
         return member;
     }
 }
-//>>> Clean Arch / Inbound Adaptor

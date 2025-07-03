@@ -30,15 +30,25 @@ public class PolicyHandler {
     public void wheneverSubscribtionRequested_SubcriptionRequest(
         @Payload SubscribtionRequested subscribtionRequested
     ) {
-        SubscribtionRequested event = subscribtionRequested;
         System.out.println(
             "\n\n##### listener SubcriptionRequest : " +
             subscribtionRequested +
             "\n\n"
         );
 
-        // Sample Logic //
-        Subcription.subcriptionRequest(event);
+        // 구독 생성 및 SubcriptionCompleted 이벤트 발행
+        Subcription subcription = new Subcription();
+        subcription.setUserId(subscribtionRequested.getUserId());
+        subcription.setSubscriptionStartedAt(new java.util.Date());
+        subcription.setSubscriptionExpiredAt(new java.util.Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 30));
+        subcription.setStatus("ACTIVE");
+        subcriptionRepository.save(subcription);
+
+        // SubcriptionCompleted 이벤트 발행
+        SubcriptionCompleted completed = new SubcriptionCompleted(subcription);
+        completed.publishAfterCommit();
     }
+
+
 }
 //>>> Clean Arch / Inbound Adaptor

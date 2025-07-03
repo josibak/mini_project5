@@ -62,35 +62,35 @@ spring:
     gateway:
       routes:
         - id: authormanagement
-          uri: http://authormanagement:8080
+          uri: http://authormanagement:8082
           predicates:
             - Path=/authors/**, 
         - id: manuscript
-          uri: http://manuscript:8080
+          uri: http://manuscript:8083
           predicates:
             - Path=/manuscripts/**, 
         - id: aipublication
-          uri: http://aipublication:8080
+          uri: http://aipublication:8084
           predicates:
             - Path=/publications/**, 
         - id: book
-          uri: http://book:8080
+          uri: http://book:8085
           predicates:
             - Path=/books/**, 
         - id: usermanagement
-          uri: http://usermanagement:8080
+          uri: http://usermanagement:8086
           predicates:
             - Path=/members/**, 
         - id: subcription
-          uri: http://subcription:8080
+          uri: http://subcription:8087
           predicates:
             - Path=/subcriptions/**, 
         - id: point
-          uri: http://point:8080
+          uri: http://point:8088
           predicates:
             - Path=/pointAccounts/**, 
         - id: frontend
-          uri: http://frontend:8080
+          uri: http://frontend:3000
           predicates:
             - Path=/**
       globalcors:

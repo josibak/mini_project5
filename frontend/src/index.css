@@ -1,0 +1,153 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 0% 45.1%;
+    --sidebar-primary: 0 0% 9%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 0 0% 96.1%;
+    --sidebar-accent-foreground: 0 0% 9%;
+    --sidebar-border: 0 0% 89.8%;
+    --sidebar-ring: 0 0% 3.9%;
+
+    /* Updated warm brown colors - more cozy and darker */
+    --warm-brown-50: 25 35% 95%;
+    --warm-brown-100: 24 30% 88%;
+    --warm-brown-200: 22 28% 78%;
+    --warm-brown-300: 20 26% 68%;
+    --warm-brown-400: 18 24% 58%;
+    --warm-brown-500: 16 22% 48%;
+    --warm-brown-600: 14 25% 38%;
+    --warm-brown-700: 12 30% 28%;
+    --warm-brown-800: 10 35% 18%;
+    --warm-brown-900: 8 40% 12%;
+  }
+
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --sidebar-background: 0 0% 3.9%;
+    --sidebar-foreground: 0 0% 63.9%;
+    --sidebar-primary: 0 0% 98%;
+    --sidebar-primary-foreground: 0 0% 9%;
+    --sidebar-accent: 0 0% 14.9%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 0 0% 14.9%;
+    --sidebar-ring: 0 0% 83.1%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .bg-warm-brown-50 { background-color: hsl(var(--warm-brown-50)); }
+  .bg-warm-brown-100 { background-color: hsl(var(--warm-brown-100)); }
+  .bg-warm-brown-200 { background-color: hsl(var(--warm-brown-200)); }
+  .bg-warm-brown-300 { background-color: hsl(var(--warm-brown-300)); }
+  .bg-warm-brown-400 { background-color: hsl(var(--warm-brown-400)); }
+  .bg-warm-brown-500 { background-color: hsl(var(--warm-brown-500)); }
+  .bg-warm-brown-600 { background-color: hsl(var(--warm-brown-600)); }
+  .bg-warm-brown-700 { background-color: hsl(var(--warm-brown-700)); }
+  .bg-warm-brown-800 { background-color: hsl(var(--warm-brown-800)); }
+  .bg-warm-brown-900 { background-color: hsl(var(--warm-brown-900)); }
+  
+  .text-warm-brown-50 { color: hsl(var(--warm-brown-50)); }
+  .text-warm-brown-100 { color: hsl(var(--warm-brown-100)); }
+  .text-warm-brown-200 { color: hsl(var(--warm-brown-200)); }
+  .text-warm-brown-300 { color: hsl(var(--warm-brown-300)); }
+  .text-warm-brown-400 { color: hsl(var(--warm-brown-400)); }
+  .text-warm-brown-500 { color: hsl(var(--warm-brown-500)); }
+  .text-warm-brown-600 { color: hsl(var(--warm-brown-600)); }
+  .text-warm-brown-700 { color: hsl(var(--warm-brown-700)); }
+  .text-warm-brown-800 { color: hsl(var(--warm-brown-800)); }
+  .text-warm-brown-900 { color: hsl(var(--warm-brown-900)); }
+  
+  .border-warm-brown-200 { border-color: hsl(var(--warm-brown-200)); }
+  .border-warm-brown-300 { border-color: hsl(var(--warm-brown-300)); }
+  .border-warm-brown-400 { border-color: hsl(var(--warm-brown-400)); }
+  .border-warm-brown-500 { border-color: hsl(var(--warm-brown-500)); }
+  .border-warm-brown-600 { border-color: hsl(var(--warm-brown-600)); }
+  .border-warm-brown-700 { border-color: hsl(var(--warm-brown-700)); }
+  
+  .hover\:bg-warm-brown-50:hover { background-color: hsl(var(--warm-brown-50)); }
+  .hover\:bg-warm-brown-100:hover { background-color: hsl(var(--warm-brown-100)); }
+  .hover\:bg-warm-brown-600:hover { background-color: hsl(var(--warm-brown-600)); }
+  .hover\:bg-warm-brown-700:hover { background-color: hsl(var(--warm-brown-700)); }
+  .hover\:bg-warm-brown-800:hover { background-color: hsl(var(--warm-brown-800)); }
+}
