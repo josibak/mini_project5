@@ -21,6 +21,7 @@ public class UserBookOpened extends AbstractEvent {
         this.userId = member.getUserId();
         this.bookId = bookId;
         this.isSubscriber = member.getSubscribeStatus();
+        this.setEventType("UserBookOpened");
     }
 }
 //>>> DDD / Domain Event

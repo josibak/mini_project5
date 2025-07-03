@@ -3,6 +3,9 @@ package miniproject.infra;
 import lombok.RequiredArgsConstructor;
 import miniproject.domain.Member;
 import miniproject.domain.MemberRepository;
+
+import javax.transaction.Transactional;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,13 +16,21 @@ public class MemberController {
 
     private final MemberRepository memberRepository;
 
+    // 0. 전체 회원 목록 조회
+    @GetMapping
+    public ResponseEntity<?> getAllMembers() {
+        return ResponseEntity.ok(memberRepository.findAll());
+    }
+
     // 1. 회원가입
     @PostMapping
     public Member register(@RequestBody Member member) {
+        member.setSubscribeStatus(false); //회원가입 시 강제 구독 상태 초기화
         return memberRepository.save(member); // onPostPersist에서 이벤트 자동 발행
     }
 
     // 2. 구독 신청
+    @Transactional
     @PostMapping("/{id}/subscribe")
     public String subscribe(@PathVariable Long id) {
         Member member = memberRepository.findById(id)
@@ -30,6 +41,7 @@ public class MemberController {
 
     // 3. 책 열람 (Kafka 이벤트 발행)
     @PostMapping("/{id}/openBook")
+    @Transactional
     public String openBook(@PathVariable Long id, @RequestParam Long bookId) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));

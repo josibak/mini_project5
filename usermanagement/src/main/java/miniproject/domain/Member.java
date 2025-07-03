@@ -1,11 +1,12 @@
 package miniproject.domain;
 
 import lombok.Data;
-import javax.persistence.*;
-import miniproject.UsermanagementApplication;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import miniproject.UsermanagementApplication;
 
 @Entity
 @Table(name = "member_table")
@@ -37,34 +38,38 @@ public class Member {
     // === 이벤트 발행: 회원가입 완료 ===
     @PostPersist
     public void onPostPersist() {
-        MemberRegistered event = new MemberRegistered(this);
-        event.publishAfterCommit();
+        new MemberRegistered(this).publishAfterCommit();
     }
 
-    // === 구독 신청 ===
+    // === 구독 신청 이벤트 발행 ===
     public void requestSubscription() {
-        SubscriptionRequested event = new SubscriptionRequested(this);
-        event.publishAfterCommit();
+        new SubscriptionRequested(this).publishAfterCommit();
     }
 
-    // === 책 열람 ===
+    // === 책 열람 이벤트 발행 ===
     public void openBook(Long bookId) {
-        UserBookOpened event = new UserBookOpened(this, bookId);
-        event.publishAfterCommit();
+        new UserBookOpened(this, bookId).publishAfterCommit();
     }
 
-    // === 도서 열람 권한 확인 ===
+    // === 책 열람 권한 여부 확인 ===
     public boolean canReadBook(Long bookId) {
-        return subscribeStatus || (purchasedBookIds != null && purchasedBookIds.contains(bookId));
+        return Boolean.TRUE.equals(subscribeStatus) || purchasedBookIds.contains(bookId);
     }
 
     // === 열람 권한 부여 (포인트 차감 완료 시 호출) ===
     public void grantBookAccess(Long bookId) {
-        if (purchasedBookIds == null) {
-            purchasedBookIds = new ArrayList<>();
-        }
         if (!purchasedBookIds.contains(bookId)) {
             purchasedBookIds.add(bookId);
         }
+    }
+
+    // === 구독 상태 ON ===
+    public void activateSubscription() {
+        this.subscribeStatus = true;
+    }
+
+    // === 구독 상태 OFF ===
+    public void deactivateSubscription() {
+        this.subscribeStatus = false;
     }
 }

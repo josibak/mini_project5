@@ -1,19 +1,19 @@
 package miniproject.infra;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.naming.NameParser;
-import javax.naming.NameParser;
 import javax.transaction.Transactional;
+
 import miniproject.config.kafka.KafkaProcessor;
-import miniproject.domain.*;
+import miniproject.domain.Member;
+import miniproject.domain.MemberRepository;
+import miniproject.domain.SubscriptionCompleted;
+import miniproject.domain.SubscriptionFinished;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
-
-//<<< Clean Arch / Inbound Adaptor
+// <<< Clean Arch / Inbound Adaptor >>>
 @Service
 @Transactional
 public class PolicyHandler {
@@ -21,21 +21,31 @@ public class PolicyHandler {
     @Autowired
     MemberRepository memberRepository;
 
+    // Kafka에서 들어오는 문자열 처리 (디버깅용)
     @StreamListener(KafkaProcessor.INPUT)
-    public void whatever(@Payload String eventString) {}
+    public void whatever(@Payload String eventString) {
+        // Optional: 로그 찍기 등
+    }
 
+    // 구독 완료 이벤트 수신 → subscribeStatus = true
     @StreamListener(KafkaProcessor.INPUT)
-    public void wheneverSubscriberRegister_UpdateStatus(@Payload SubscriberRegister event) {
+    public void onSubscriptionCompleted(@Payload SubscriptionCompleted event) {
+        System.out.println("##### SubscriptionCompleted 이벤트 수신됨: " + event);
         memberRepository.findById(event.getUserId()).ifPresent(member -> {
-            member.setSubscribeStatus(true);
+            System.out.println("########################Before activate :  " + member.getSubscribeStatus());
+            member.activateSubscription(); // 상태 변경 로직은 Member 엔티티 내부
+            System.out.println("(\"########################After activate : " + member.getSubscribeStatus());
             memberRepository.save(member);
+            System.out.println("(\"########################Saved member : " + member);
         });
     }
 
+    // 구독 만료 이벤트 수신 → subscribeStatus = false
     @StreamListener(KafkaProcessor.INPUT)
-    public void wheneverSubscriptionFinish_UpdateStatus(@Payload SubscriptionFinished event) {
+    public void onSubscriptionFinished(@Payload SubscriptionFinished event) {
+        System.out.println("##### SubscriptionFinished 이벤트 수신됨: " + event);
         memberRepository.findById(event.getUserId()).ifPresent(member -> {
-            member.setSubscribeStatus(false);
+            member.deactivateSubscription();
             memberRepository.save(member);
         });
     }

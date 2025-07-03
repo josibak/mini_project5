@@ -15,7 +15,7 @@ public class SubscriptionRequested extends AbstractEvent {
     private Long userId;
 
     public SubscriptionRequested(Member member) {
-        super(member);
+        super();
         this.userId = member.getUserId();
     }
 }

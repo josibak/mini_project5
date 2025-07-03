@@ -9,6 +9,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SubscriptionFinished {
+public class SubscriptionCompleted {
     private Long userId;
 }
