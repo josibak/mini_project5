@@ -1,21 +1,24 @@
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: gateway
+  name: frontend
   labels:
-    app: gateway
+    app: frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: gateway
+      app: frontend
   template:
     metadata:
       labels:
-        app: gateway
+        app: frontend
     spec:
       containers:
-        - name: gateway
-          image: project01.azurecr.io/gateway:prod
+        - name: frontend
+          image: project01.azurecr.io/frontend:test1
           ports:
             - containerPort: 8080
+          

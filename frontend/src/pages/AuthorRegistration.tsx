@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 
+import axios from 'axios';
+
 const AuthorRegistration = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -17,15 +19,28 @@ const AuthorRegistration = () => {
     portfolio: 'https://your-portfolio.com'
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    toast({
-      title: "작가 등록 신청되었습니다",
-      description: "검토 후 연락드리겠습니다.",
-      duration: 3000,
-    });
+    try {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/authors`, formData); 
+
+      toast({
+        title: "작가 등록 신청되었습니다",
+        description: "검토 후 연락드리겠습니다.",
+        duration: 3000,
+      });
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "등록 실패",
+        description: "서버와의 통신에 실패했습니다.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

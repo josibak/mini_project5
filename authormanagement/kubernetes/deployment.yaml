@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: authormanagement
-          image: "username/authormanagement:latest"
+          image: "project01.azurecr.io/author:test"
           ports:
             - containerPort: 8080
           readinessProbe:
