@@ -16,17 +16,17 @@ spec:
     spec:
       containers:
         - name: authormanagement
-          image: "project01.azurecr.io/authormanagement:prod"
+          image: "project01.azurecr.io/authormanagement:prod2"
           ports:
             - containerPort: 8080
           readinessProbe:
             httpGet:
-              path: '/actuator/health'
+              path: /actuator/health
               port: 8080
-            initialDelaySeconds: 10
-            timeoutSeconds: 2
+            initialDelaySeconds: 20      # 앱 부팅 시간 고려
             periodSeconds: 5
-            failureThreshold: 10
+            timeoutSeconds: 3
+            failureThreshold: 20         # 실패 허용 횟수 증가
           livenessProbe:
             httpGet:
               path: '/actuator/health'
