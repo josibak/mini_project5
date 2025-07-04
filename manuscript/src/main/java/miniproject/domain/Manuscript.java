@@ -1,12 +1,6 @@
 package miniproject.domain;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import javax.persistence.*;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -14,9 +8,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import lombok.Data;
-import lombok.Getter;
 import miniproject.ManuscriptApplication;
-import miniproject.domain.FinalManuscriptSaved;
 
 @Entity
 @Table(name = "Manuscript_table")
