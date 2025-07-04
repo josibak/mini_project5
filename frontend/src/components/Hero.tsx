@@ -1,8 +1,17 @@
 
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
 const Hero = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // 컴포넌트 마운트 시 로그인 상태 확인
+  useEffect(() => {
+    const loginStatus = localStorage.getItem('isLoggedIn') === 'true';
+    setIsLoggedIn(loginStatus);
+  }, []);
+
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-warm-brown-50 to-warm-brown-100 overflow-hidden">
       {/* Background Pattern */}
@@ -37,11 +46,13 @@ const Hero = () => {
                 ₩9,900원으로 모든 도서 읽기
               </Button>
             </Link>
-            <Link to="/login">
-              <Button variant="outline" className="border-warm-brown-700 text-warm-brown-700 hover:bg-warm-brown-50 px-8 py-4 text-lg rounded-lg">
-                무료 체험
-              </Button>
-            </Link>
+            {!isLoggedIn && (
+              <Link to="/login">
+                <Button variant="outline" className="border-warm-brown-700 text-warm-brown-700 hover:bg-warm-brown-50 px-8 py-4 text-lg rounded-lg">
+                  무료 체험
+                </Button>
+              </Link>
+            )}
           </div>
           
           {/* Stats */}

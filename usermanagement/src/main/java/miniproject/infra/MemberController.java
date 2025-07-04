@@ -3,8 +3,10 @@ package miniproject.infra;
 import lombok.RequiredArgsConstructor;
 import miniproject.domain.Member;
 import miniproject.domain.MemberRepository;
+import miniproject.domain.LoginRequest;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,12 +26,42 @@ public class MemberController {
 
     // 1. 회원가입
     @PostMapping
-    public Member register(@RequestBody Member member) {
-        member.setSubscribeStatus(false); //회원가입 시 강제 구독 상태 초기화
-        return memberRepository.save(member); // onPostPersist에서 이벤트 자동 발행
+    public ResponseEntity<?> register(@RequestBody Member member) {
+        boolean exists = memberRepository.existsByEmail(member.getEmail());
+        if (exists) {
+            return ResponseEntity
+                    .status(409)
+                    .body("이미 가입된 이메일입니다.");
+        }
+
+        member.setSubscribeStatus(false);
+        Member saved = memberRepository.save(member);
+        return ResponseEntity.ok(saved);
     }
 
-    // 2. 구독 신청
+    // 2. 로그인
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+        Optional<Member> optionalMember = memberRepository.findByEmail(request.getEmail());
+
+        if (optionalMember.isEmpty()) {
+            return ResponseEntity
+                    .status(401)
+                    .body("존재하지 않는 계정입니다.");
+        }
+
+        Member member = optionalMember.get();
+
+        if (!member.getPassword().equals(request.getPassword())) {
+            return ResponseEntity
+                    .status(401)
+                    .body("비밀번호가 일치하지 않습니다.");
+        }
+
+        return ResponseEntity.ok(member);
+    }
+
+    // 3. 구독 신청
     @Transactional
     @PostMapping("/{id}/subscribe")
     public String subscribe(@PathVariable Long id) {
@@ -39,7 +71,7 @@ public class MemberController {
         return "구독 신청 완료";
     }
 
-    // 3. 책 열람 (Kafka 이벤트 발행)
+    // 4. 책 열람 (Kafka 이벤트 발행)
     @PostMapping("/{id}/openBook")
     @Transactional
     public String openBook(@PathVariable Long id, @RequestParam Long bookId) {
@@ -50,26 +82,24 @@ public class MemberController {
         return "도서 열람 권한 처리 완료";
     }
 
-    // 4. 책 열람 권한 부여 API (PointService가 호출)
+    // 5. 책 열람 권한 부여
     @PutMapping("/{userId}/grantBook/{bookId}")
     public ResponseEntity<?> grantBookAccess(@PathVariable Long userId, @PathVariable Long bookId) {
-        Member member = memberRepository.findById(userId)
-                .orElse(null);
+        Member member = memberRepository.findById(userId).orElse(null);
 
         if (member == null) {
             return ResponseEntity.notFound().build();
         }
 
         member.grantBookAccess(bookId);
-        memberRepository.save(member); // 권한 저장
-
-        return ResponseEntity.ok().body("열람 권한 부여 완료");
+        memberRepository.save(member);
+        return ResponseEntity.ok("열람 권한 부여 완료");
     }
-    @GetMapping("/{userId}/canRead")
 
+    // 6. 책 열람 여부 확인
+    @GetMapping("/{userId}/canRead")
     public ResponseEntity<Boolean> canReadBook(@PathVariable Long userId, @RequestParam Long bookId) {
-        Member member = memberRepository.findById(userId)
-                .orElse(null);
+        Member member = memberRepository.findById(userId).orElse(null);
 
         if (member == null) {
             return ResponseEntity.notFound().build();

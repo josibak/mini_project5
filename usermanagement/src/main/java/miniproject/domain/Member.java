@@ -19,6 +19,7 @@ public class Member {
 
     private String name;
     private String email;
+    private String password;
     private Boolean subscribeStatus = false; // 구독 여부
     private Boolean isKtUser = false;        // KT 유저 여부
 

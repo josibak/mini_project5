@@ -1,21 +1,28 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Menu, X, BookOpen } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
-import UserDropdown from './UserDropdown';
 import AuthorDropdown from './AuthorDropdown';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Simple login state
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
+
+  // 컴포넌트 마운트 시 로그인 상태 확인
+  useEffect(() => {
+    const loginStatus = localStorage.getItem('isLoggedIn') === 'true';
+    setIsLoggedIn(loginStatus);
+  }, []);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('isLoggedIn');
     setIsLoggedIn(false);
+    alert('로그아웃 되었습니다.');
   };
 
   const isActive = (path: string) => location.pathname === path;
@@ -60,23 +67,19 @@ const Header = () => {
 
           <div className="hidden md:flex items-center gap-6">
             {isLoggedIn ? (
-              // Show profile and logout when logged in
-              <>
-                <UserDropdown />
-                <button 
-                  onClick={handleLogout}
-                  className="text-gray-600 hover:text-gray-900 transition-colors"
-                >
-                  로그아웃
-                </button>
-              </>
+              // 로그인 상태: 로그아웃 버튼만 표시
+              <button 
+                onClick={handleLogout}
+                className="text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                로그아웃
+              </button>
             ) : (
-              // Show login and signup when not logged in
+              // 비로그인 상태: 로그인과 회원가입 버튼 표시
               <>
                 <Link 
                   to="/login" 
                   className="text-gray-600 hover:text-gray-900 transition-colors"
-                  onClick={() => setIsLoggedIn(true)} // Simple login simulation
                 >
                   로그인
                 </Link>

@@ -1,8 +1,8 @@
-
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { BookOpen, Eye, EyeOff, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import axios from 'axios';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -12,11 +12,38 @@ const Login = () => {
   });
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 로그인 로직 구현
-    alert('로그인 되었습니다!');
-    navigate('/');
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/members/login`,
+        {
+          email: formData.email,
+          password: formData.password
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      // 성공 시 localStorage에 상태 저장
+      localStorage.setItem('isLoggedIn', 'true');
+
+      alert('로그인 되었습니다!');
+      navigate('/');
+      window.location.reload();
+    } catch (error: any) {
+      console.error(error);
+      // 서버에서 응답 메시지가 있다면 표시
+      if (error.response && error.response.data) {
+        alert(error.response.data);
+      } else {
+        alert('로그인에 실패했습니다. 다시 시도해주세요.');
+      }
+    }
   };
 
   return (
@@ -48,7 +75,7 @@ const Login = () => {
                 type="email"
                 id="email"
                 value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="w-full px-4 py-3 border border-warm-brown-300 rounded-lg focus:ring-2 focus:ring-warm-brown-500 focus:border-transparent"
                 placeholder="이메일을 입력하세요"
                 required
@@ -64,7 +91,7 @@ const Login = () => {
                   type={showPassword ? 'text' : 'password'}
                   id="password"
                   value={formData.password}
-                  onChange={(e) => setFormData({...formData, password: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   className="w-full px-4 py-3 pr-12 border border-warm-brown-300 rounded-lg focus:ring-2 focus:ring-warm-brown-500 focus:border-transparent"
                   placeholder="비밀번호를 입력하세요"
                   required
