@@ -17,10 +17,14 @@ public class Publication {
 
     private Long manuscriptId;
     private String summary;
+
+    @Column(length = 1000) // 또는 columnDefinition = "TEXT"
     private String postUrl;
+
     private String title;
     private Long authorId;
     private Date publicAt;
+    @Column(columnDefinition = "TEXT")
     private String content;
     private String bookId;
     private String status;
@@ -50,7 +54,7 @@ public class Publication {
     public static void aiRequest(AiRequested event) {
         repository().findById(event.getPublicationId()).ifPresent(publication -> {
             AIPublicationService aiService = AipublicationApplication.applicationContext.getBean(AIPublicationService.class);
-
+            System.out.println("AI서비스 시작! "+ publication.getPublicationId());
             String summary = aiService.generateSummary(publication.getContent());
             String coverUrl = aiService.generateCover(publication.getTitle(), publication.getContent());
 
