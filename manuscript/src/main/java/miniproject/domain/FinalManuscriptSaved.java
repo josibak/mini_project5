@@ -1,6 +1,5 @@
 package miniproject.domain;
 
-import java.time.LocalDateTime;
 import lombok.*;
 import miniproject.infra.AbstractEvent;
 
