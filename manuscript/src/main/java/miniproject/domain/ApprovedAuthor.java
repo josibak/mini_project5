@@ -4,6 +4,7 @@ import javax.persistence.*;
 import lombok.Data;
 
 //<<< EDA / CQRS
+// 리드모델
 @Entity
 @Table(name = "ApprovedAuthor_table")
 @Data

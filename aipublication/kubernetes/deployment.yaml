@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: aipublication
-          image: "username/aipublication:latest"
+          image: project01.azurecr.io/aipublication:v1
           ports:
             - containerPort: 8080
           readinessProbe:
